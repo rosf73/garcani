@@ -28,7 +28,7 @@ import com.rosf73.garcani.ui.anim.Shadow
 import com.rosf73.garcani.ui.anim.WaveCircle
 import com.rosf73.garcani.ui.theme.Purple4099
 import com.rosf73.garcani.ui.theme.Purple80
-import com.rosf73.garcani.ui.theme.Purple8099
+import com.rosf73.garcani.ui.theme.Purple80CC
 
 @Composable
 fun Greeting(
@@ -102,7 +102,7 @@ private fun CrystalBall(
                 .fillMaxWidth(0.5f)
                 .aspectRatio(1f),
             color = Purple80,
-            backgroundColor = Purple8099,
+            backgroundColor = Purple80CC,
         )
         Spacer(modifier = Modifier.height(30.dp))
         BoxWithConstraints(
