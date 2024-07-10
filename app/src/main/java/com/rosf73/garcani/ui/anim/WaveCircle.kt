@@ -63,7 +63,7 @@ fun WaveCircle(
     val deltaAnim = rememberInfiniteTransition(label = "")
     val d1 by deltaAnim.animateFloat(
         initialValue = -hWeight[0],
-        targetValue = drawSize + hWeight[0] * 2,
+        targetValue = drawSize + waveHeight,
         animationSpec = infiniteRepeatable(
             animation = tween(durations[0], easing = LinearEasing)
         ),
@@ -71,7 +71,7 @@ fun WaveCircle(
     )
     val d2 by deltaAnim.animateFloat(
         initialValue = -hWeight[1],
-        targetValue = drawSize + hWeight[1] * 2,
+        targetValue = drawSize + waveHeight,
         animationSpec = infiniteRepeatable(
             animation = tween(durations[1], easing = LinearEasing)
         ),
@@ -79,7 +79,7 @@ fun WaveCircle(
     )
     val d3 by deltaAnim.animateFloat(
         initialValue = -hWeight[2],
-        targetValue = drawSize + hWeight[2] * 2,
+        targetValue = drawSize + waveHeight,
         animationSpec = infiniteRepeatable(
             animation = tween(durations[2], easing = LinearEasing)
         ),
@@ -87,7 +87,7 @@ fun WaveCircle(
     )
     val d4 by deltaAnim.animateFloat(
         initialValue = -hWeight[3],
-        targetValue = drawSize + hWeight[3] * 2,
+        targetValue = drawSize + waveHeight,
         animationSpec = infiniteRepeatable(
             animation = tween(durations[3], easing = LinearEasing)
         ),
@@ -95,7 +95,7 @@ fun WaveCircle(
     )
     val d5 by deltaAnim.animateFloat(
         initialValue = -hWeight[4],
-        targetValue = drawSize + hWeight[4],
+        targetValue = drawSize + waveHeight,
         animationSpec = infiniteRepeatable(
             animation = tween(durations[4], easing = LinearEasing)
         ),
