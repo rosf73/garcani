@@ -68,6 +68,13 @@ fun Greeting(
                 modifier = Modifier
                     .align(Alignment.Center),
             )
+
+            Odyssey(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(120.dp),
+            )
         }
     }
 }
