@@ -33,7 +33,6 @@ import com.rosf73.garcani.ui.anim.WaveCircle
 import com.rosf73.garcani.ui.theme.Purple4099
 import com.rosf73.garcani.ui.theme.Purple80
 import com.rosf73.garcani.ui.theme.Purple80CC
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -49,18 +48,22 @@ fun Greeting(
         val prompt = """
             You are a fortune teller from now on.
             And... your name is GArcani.
+            Please add a line break at the end of every sentence.
         """.trimIndent()
         val response = model.generateContent(prompt)
-        response.text?.split(Regex("[.!]"))?.forEach {
-            if (it.isNotBlank() && it.trim().isNotEmpty()) {
-                textList.add("$it.")
+        val lines = response.text?.replace("!", ".")?.split(Regex("\n"))
+        lines?.forEachIndexed { i, line ->
+            if (line.isNotBlank() && line.trim().isNotEmpty()) {
+                textList.add(line)
                 // time for reading
-                if (it.length > 50) {
-                    delay(5000)
-                } else if (it.length > 30) {
-                    delay(4000)
-                } else {
-                    delay(3000)
+                if (lines.lastIndex != i) {
+                    if (line.length > 50) {
+                        delay(5000)
+                    } else if (line.length > 30) {
+                        delay(4000)
+                    } else {
+                        delay(3000)
+                    }
                 }
             }
         }
@@ -96,7 +99,7 @@ fun Greeting(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        .height(120.dp),
+                        .aspectRatio(3f / 2f),
                 )
             }
         }
