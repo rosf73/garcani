@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rosf73.garcani.ui.core.GradientButton
 
 @Composable
 fun Odyssey(
@@ -22,24 +23,24 @@ fun Odyssey(
             .fillMaxSize()
             .padding(15.dp),
     ) {
-        Button(
+        GradientButton(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f),
-            onClick = { /*TODO*/ },
             shape = MaterialTheme.shapes.medium,
+            onClick = { /*TODO*/ },
         ) {
             Text(text = "Thought Card")
         }
 
         Spacer(modifier = Modifier.width(15.dp))
 
-        Button(
+        GradientButton(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(1f),
-            onClick = { /*TODO*/ },
             shape = MaterialTheme.shapes.medium,
+            onClick = { /*TODO*/ },
         ) {
             Text(text = "Tarot")
         }
