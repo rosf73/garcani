@@ -10,13 +10,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,13 +33,17 @@ import com.rosf73.garcani.ui.anim.WaveCircle
 import com.rosf73.garcani.ui.theme.Purple4099
 import com.rosf73.garcani.ui.theme.Purple80
 import com.rosf73.garcani.ui.theme.Purple80CC
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun Greeting(
     model: GenerativeModel,
     modifier: Modifier = Modifier,
 ) {
-    var text by remember { mutableStateOf("Waiting...") }
+    val textList = remember { mutableStateListOf("...") }
+    var isDoneToSpeech by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = model) {
         val prompt = """
@@ -43,7 +51,20 @@ fun Greeting(
             And... your name is GArcani.
         """.trimIndent()
         val response = model.generateContent(prompt)
-        text = response.text ?: ""
+        response.text?.split(Regex("[.!]"))?.forEach {
+            if (it.isNotBlank() && it.trim().isNotEmpty()) {
+                textList.add("$it.")
+                // time for reading
+                if (it.length > 50) {
+                    delay(5000)
+                } else if (it.length > 30) {
+                    delay(4000)
+                } else {
+                    delay(3000)
+                }
+            }
+        }
+        isDoneToSpeech = true
     }
 
     Scaffold(
@@ -59,8 +80,9 @@ fun Greeting(
                     .align(Alignment.TopCenter),
             ) {
                 Spacer(modifier = Modifier.height(30.dp))
+
                 SpeechBubble(
-                    text = text,
+                    textList = textList,
                 )
             }
 
@@ -69,12 +91,14 @@ fun Greeting(
                     .align(Alignment.Center),
             )
 
-            Odyssey(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .height(120.dp),
-            )
+            if (isDoneToSpeech) {
+                Odyssey(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(120.dp),
+                )
+            }
         }
     }
 }
@@ -82,21 +106,48 @@ fun Greeting(
 @Composable
 private fun SpeechBubble(
     modifier: Modifier = Modifier,
-    text: String,
+    textList: List<String>,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val scrollState = rememberLazyListState()
+
     // TODO : add speech bubble with anim
-    LazyColumn(
+    Column(
         modifier = modifier
             .fillMaxWidth(0.8f)
+            .height(180.dp),
     ) {
-        item {
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(
-                text = text,
-                textAlign = TextAlign.Center,
-            )
+        Spacer(modifier = Modifier.weight(1f))
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            state = scrollState,
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(30.dp))
+            }
+            items(textList, key = { it }) { item ->
+                GArcaniText(text = item)
+            }
+
+            coroutineScope.launch {
+                scrollState.animateScrollToItem(textList.size)
+            }
         }
     }
+}
+
+@Composable
+private fun GArcaniText(
+    modifier: Modifier = Modifier,
+    text: String,
+) {
+    Text(
+        text = text,
+        textAlign = TextAlign.Center,
+    )
 }
 
 @Composable
