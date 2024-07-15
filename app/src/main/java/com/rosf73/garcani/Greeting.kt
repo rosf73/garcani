@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,8 +26,6 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.rosf73.garcani.ui.anim.Shadow
 import com.rosf73.garcani.ui.anim.WaveCircle
 import com.rosf73.garcani.ui.core.SpeechBubble
-import com.rosf73.garcani.ui.theme.Purple4099
-import com.rosf73.garcani.ui.theme.Purple80
 import com.rosf73.garcani.ui.theme.Purple80CC
 import kotlinx.coroutines.delay
 
@@ -112,7 +111,7 @@ private fun CrystalBall(
             modifier = Modifier
                 .fillMaxWidth(0.5f)
                 .aspectRatio(1f),
-            color = Purple80,
+            color = MaterialTheme.colorScheme.secondary,
             backgroundColor = Purple80CC,
         )
         Spacer(modifier = Modifier.height(30.dp))
@@ -127,7 +126,7 @@ private fun CrystalBall(
                 modifier = Modifier
                     .fillMaxSize()
                     .scale(maxOf(aspectRatio, 1f), maxOf(1 / aspectRatio, 1f)),
-                color = Purple4099,
+                color = MaterialTheme.colorScheme.onPrimary,
             )
         }
     }

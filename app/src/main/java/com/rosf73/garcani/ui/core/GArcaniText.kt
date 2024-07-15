@@ -1,5 +1,6 @@
 package com.rosf73.garcani.ui.core
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,5 +15,6 @@ fun GArcaniText(
         modifier = modifier,
         text = text,
         textAlign = TextAlign.Center,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 }

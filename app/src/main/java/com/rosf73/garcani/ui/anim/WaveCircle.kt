@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import com.rosf73.garcani.ui.theme.WhiteCC
 import kotlin.random.Random
 
 private const val WAVE_COUNT = 5
@@ -113,7 +114,7 @@ fun WaveCircle(
                 )
             )
         }
-        drawPath(path = circlePath, brush = Brush.linearGradient(colors = listOf(Color.White, backgroundColor)))
+        drawPath(path = circlePath, brush = Brush.linearGradient(colors = listOf(WhiteCC, backgroundColor)))
 
         clipPath(path = circlePath, clipOp = ClipOp.Intersect) {
             repeat(WAVE_COUNT) { i ->

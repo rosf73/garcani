@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -62,7 +63,7 @@ fun SpeechBubble(
         Box(
             modifier = Modifier
             .fillMaxSize()
-            .background(brush = Brush.verticalGradient(listOf(White, Transparent))),
+            .background(brush = Brush.verticalGradient(listOf(MaterialTheme.colorScheme.background, Transparent))),
         )
     }
 }
