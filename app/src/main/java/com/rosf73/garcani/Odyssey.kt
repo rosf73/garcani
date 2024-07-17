@@ -46,42 +46,44 @@ fun Odyssey(
             .fillMaxSize()
             .padding(horizontal = 15.dp),
     ) {
-        GradientButton(
-            modifier = Modifier
-                .weight(1f)
-                .graphicsLayer {
-                    translationY = size.height * offsetY1.value
-                }
-                .border(
-                    width = 5.dp,
-                    color = White,
-                    shape = MaterialTheme.shapes.medium,
-                ),
-            elevation = ButtonDefaults.elevatedButtonElevation(),
-            shape = MaterialTheme.shapes.medium,
-            onClick = { /*TODO*/ },
+        OdysseyCard(
+            modifier = Modifier.weight(1f),
+            offset = offsetY1.value,
         ) {
             Text(text = "Thought Card")
         }
 
         Spacer(modifier = Modifier.width(15.dp))
 
-        GradientButton(
-            modifier = Modifier
-                .weight(1f)
-                .graphicsLayer {
-                    translationY = size.height * offsetY2.value
-                }
-                .border(
-                    width = 5.dp,
-                    color = White,
-                    shape = MaterialTheme.shapes.medium,
-                ),
-            elevation = ButtonDefaults.elevatedButtonElevation(),
-            shape = MaterialTheme.shapes.medium,
-            onClick = { /*TODO*/ },
+        OdysseyCard(
+            modifier = Modifier.weight(1f),
+            offset = offsetY2.value,
         ) {
             Text(text = "Tarot")
         }
+    }
+}
+
+@Composable
+private fun OdysseyCard(
+    modifier: Modifier = Modifier,
+    offset: Float,
+    content: @Composable () -> Unit,
+) {
+    GradientButton(
+        modifier = modifier
+            .graphicsLayer {
+                translationY = size.height * offset
+            }
+            .border(
+                width = 5.dp,
+                color = White,
+                shape = MaterialTheme.shapes.medium,
+            ),
+        elevation = ButtonDefaults.elevatedButtonElevation(),
+        shape = MaterialTheme.shapes.medium,
+        onClick = {},
+    ) {
+        content()
     }
 }
