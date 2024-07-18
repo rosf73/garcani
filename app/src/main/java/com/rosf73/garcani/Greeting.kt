@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import com.google.ai.client.generativeai.GenerativeModel
+import com.rosf73.garcani.feature.thought.Deck
 import com.rosf73.garcani.ui.anim.Shadow
 import com.rosf73.garcani.ui.anim.WaveCircle
 import com.rosf73.garcani.ui.core.SpeechBubble
@@ -35,15 +36,25 @@ fun Greeting(
     modifier: Modifier = Modifier,
 ) {
     val textList = remember { mutableStateListOf("...") }
-    var isDoneToSpeech by remember { mutableStateOf(false) }
+    var isDoneToGreeting by remember { mutableStateOf(false) }
+    var didChooseOdyssey by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = model) {
-        val prompt = """
-            You are a fortune teller from now on.
-            And... your name is GArcani.
-            Please add a line break at the end of every sentence.
-        """.trimIndent()
-        val response = model.generateContent(prompt)
+//        val prompt = """
+//            You are a fortune teller from now on.
+//            And... your name is GArcani.
+//            Please add a line break at the end of every sentence.
+//        """.trimIndent()
+//        val response = model.generateContent(prompt)
+        data class Response(val text: String?)
+        delay(3000)
+        textList.clear()
+        val response = Response(text = "Greetings, seeker of paths unseen.\n" +
+                "GArcani is the name, and deciphering destinies is my calling.\n" +
+                "I read the threads of fate woven within the tapestry of time, a weaver of whispers and a herald of what might be.\n" +
+                "Come, let the cards reveal your story.\n" +
+                "What is it you wish to know?")
+//        val response = Response(text = "Greetings, seeker of paths unseen.\nGArcani is the name, and deciphering destinies is my calling.")
         val lines = response.text?.replace("!", ".")?.split(Regex("\n"))
         lines?.forEachIndexed { i, line ->
             if (line.isNotBlank() && line.trim().isNotEmpty()) {
@@ -60,7 +71,7 @@ fun Greeting(
                 }
             }
         }
-        isDoneToSpeech = true
+        isDoneToGreeting = true
     }
 
     Scaffold(
@@ -90,12 +101,25 @@ fun Greeting(
                     .align(Alignment.Center),
             )
 
-            if (isDoneToSpeech) {
+            if (isDoneToGreeting) {
                 Odyssey(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
                         .aspectRatio(3f / 2f),
+                    onClick = {
+                        textList.add("Okay, let's see...")
+                        didChooseOdyssey = true
+                    }
+                )
+            }
+
+            if (didChooseOdyssey) {
+                Deck(
+                    model = model,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter),
                 )
             }
         }

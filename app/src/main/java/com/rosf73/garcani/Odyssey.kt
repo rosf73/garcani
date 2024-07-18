@@ -1,10 +1,7 @@
 package com.rosf73.garcani
 
-import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +27,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun Odyssey(
     modifier: Modifier = Modifier,
+    onClick: () -> Unit,
 ) {
     val init1 = remember { mutableFloatStateOf(-5f) }
     val init2 = remember { mutableFloatStateOf(-5f) }
@@ -68,6 +66,8 @@ fun Odyssey(
 
                 isLeftFast = true
                 isClicked.value = true
+
+                if (!isLeftFast) onClick()
             }} else {{}}
         ) {
             Text(text = "Thought Card")
@@ -100,6 +100,8 @@ fun Odyssey(
 
                 isLeftFast = true
                 isClicked.value = true
+
+                if (isLeftFast) onClick()
             }} else {{}}
         ) {
             Text(text = "Tarot")
