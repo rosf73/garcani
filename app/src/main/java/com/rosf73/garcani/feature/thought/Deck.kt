@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -36,23 +37,23 @@ fun Deck(
 
     CircularDeck(
         modifier = modifier,
-        initOffset = init.floatValue,
-        targetOffset = target.floatValue,
+        initY = init.floatValue,
+        targetY = target.floatValue,
     )
 }
 
 @Composable
 private fun CircularDeck(
     modifier: Modifier = Modifier,
-    initOffset: Float,
-    targetOffset: Float,
+    initY: Float,
+    targetY: Float,
 ) {
     val upDuration = 2000
     val cardCount = 10
 
     val containerOffset by animateFloatAsState(
-        initOffset,
-        targetOffset,
+        initY,
+        targetY,
         duration = upDuration,
     )
 
@@ -85,21 +86,26 @@ private fun ThoughtCard(
     index: Int,
     doBefore: suspend () -> Unit = {},
 ) {
-    val firstValue = -135f
-    val lastValue = -45f
-    val angle = remember { Animatable(firstValue) }
+    val firstAngle = -135f
+    val lastAngle = -45f
+
+    val firstX = (-90).dp
+    val lastX = -firstX
+
+    val weight = remember { Animatable(1f) }
 
     LaunchedEffect(key1 = true) {
         doBefore()
-        angle.animateTo(
-            targetValue = lastValue - (lastValue - firstValue) / (totalCount - 1) * (totalCount - index - 1),
+        weight.animateTo(
+            targetValue = (totalCount.toFloat() - index - 1) / (totalCount - 1),
             animationSpec = tween(1200),
         )
     }
 
     GradientButton(
         modifier = modifier
-            .rotate(angle.value)
+            .offset(x = lastX - (lastX - firstX) * weight.value)
+            .rotate(lastAngle - (lastAngle - firstAngle) * weight.value)
             .border(
                 width = 5.dp,
                 color = White,
