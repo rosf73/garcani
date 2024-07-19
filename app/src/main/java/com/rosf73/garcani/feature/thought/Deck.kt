@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +25,8 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.rosf73.garcani.ui.anim.animateFloatAsState
 import com.rosf73.garcani.ui.core.GradientButton
 import com.rosf73.garcani.ui.theme.White
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 
 // Gemini pick random 10 quotes
@@ -30,21 +34,53 @@ import kotlinx.coroutines.delay
 fun Deck(
     modifier: Modifier = Modifier,
     model: GenerativeModel,
+    speech: suspend (String) -> Unit,
 ) {
+    val quoteList = remember { mutableStateListOf<String>() }
+    var isDoneRequest = false
+    LaunchedEffect(key1 = model) {
+        awaitAll(
+            async {
+                delay(1600)
+                if (!isDoneRequest) {
+                    speech("I'm selecting 10 out of 30 sentences... Just a moment.") // TODO: temp
+                }
+            },
+            async {
+                val prompt = """
+                    Please select 30 short quotes
+                    and write 30 lines in the format of [number]:[content] without any additional words.
+                """.trimIndent()
+                val response = model.generateContent(prompt)
+                isDoneRequest = true
+                quoteList.addAll(
+                    response.text?.split("\n")?.map {
+                        it.split(":").last().trim()
+                    } ?: emptyList()
+                )
+                speech("Alright! Now, take your pick.") // TODO: temp
+            }
+        )
+    }
+
     // anim
     val init = remember { mutableFloatStateOf(1.5f) }
     val target = remember { mutableFloatStateOf(0f) }
 
-    CircularDeck(
-        modifier = modifier,
-        initY = init.floatValue,
-        targetY = target.floatValue,
-    )
+    if (quoteList.isNotEmpty()) {
+        CircularDeck(
+            modifier = modifier,
+            list = quoteList,
+            initY = init.floatValue,
+            targetY = target.floatValue,
+        )
+    }
 }
 
 @Composable
 private fun CircularDeck(
     modifier: Modifier = Modifier,
+    list: List<String>,
     initY: Float,
     targetY: Float,
 ) {
@@ -73,8 +109,10 @@ private fun CircularDeck(
                 index = it,
                 doBefore = {
                     delay(upDuration.toLong())
-                }
-            )
+                },
+            ) {
+                Text(text = list[it])
+            }
         }
     }
 }
@@ -85,6 +123,8 @@ private fun ThoughtCard(
     totalCount: Int,
     index: Int,
     doBefore: suspend () -> Unit = {},
+    doAfter: suspend () -> Unit = {},
+    content: @Composable () -> Unit,
 ) {
     val firstAngle = -135f
     val lastAngle = -45f
@@ -100,6 +140,7 @@ private fun ThoughtCard(
             targetValue = (totalCount.toFloat() - index - 1) / (totalCount - 1),
             animationSpec = tween(1200),
         )
+        doAfter()
     }
 
     GradientButton(
@@ -115,6 +156,6 @@ private fun ThoughtCard(
         shape = MaterialTheme.shapes.medium,
         onClick = {},
     ) {
-
+        content()
     }
 }

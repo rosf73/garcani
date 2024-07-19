@@ -54,7 +54,6 @@ fun Greeting(
                 "I read the threads of fate woven within the tapestry of time, a weaver of whispers and a herald of what might be.\n" +
                 "Come, let the cards reveal your story.\n" +
                 "What is it you wish to know?")
-//        val response = Response(text = "Greetings, seeker of paths unseen.\nGArcani is the name, and deciphering destinies is my calling.")
         val lines = response.text?.replace("!", ".")?.split(Regex("\n"))
         lines?.forEachIndexed { i, line ->
             if (line.isNotBlank() && line.trim().isNotEmpty()) {
@@ -120,6 +119,9 @@ fun Greeting(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter),
+                    speech = { text ->
+                        textList.add(text)
+                    }
                 )
             }
         }
