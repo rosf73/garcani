@@ -1,6 +1,9 @@
 package com.rosf73.garcani.feature.thought
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateIntOffsetAsState
+import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -14,12 +17,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.ai.client.generativeai.GenerativeModel
 import com.rosf73.garcani.ui.anim.animateFloatAsState
@@ -48,7 +57,7 @@ fun Deck(
             },
             async {
                 val prompt = """
-                    Please select 30 short quotes
+                    Please select 30 short quotes of less than 60 characters
                     and write 30 lines in the format of [number]:[content] without any additional words.
                 """.trimIndent()
                 val response = model.generateContent(prompt)
@@ -93,6 +102,8 @@ private fun CircularDeck(
         duration = upDuration,
     )
 
+    val selectedCard = remember { mutableIntStateOf(-1) }
+
     Box(
         modifier = modifier
             .graphicsLayer {
@@ -107,11 +118,17 @@ private fun CircularDeck(
                     .aspectRatio(3f / 2f),
                 totalCount = cardCount,
                 index = it,
+                isSelected = selectedCard.intValue == it,
+                content = list[it],
                 doBefore = {
                     delay(upDuration.toLong())
                 },
+                onClick = {
+                    if (selectedCard.intValue < 0) {
+                        selectedCard.intValue = it
+                    }
+                },
             ) {
-                Text(text = list[it])
             }
         }
     }
@@ -122,9 +139,11 @@ private fun ThoughtCard(
     modifier: Modifier = Modifier,
     totalCount: Int,
     index: Int,
+    isSelected: Boolean,
+    content: String,
     doBefore: suspend () -> Unit = {},
+    onClick: () -> Unit,
     doAfter: suspend () -> Unit = {},
-    content: @Composable () -> Unit,
 ) {
     val firstAngle = -135f
     val lastAngle = -45f
@@ -133,6 +152,19 @@ private fun ThoughtCard(
     val lastX = -firstX
 
     val weight = remember { Animatable(1f) }
+
+    val selectedOffsetX by animateDpAsState(
+        targetValue = if (isSelected) 0.dp else lastX - (lastX - firstX) * weight.value,
+        animationSpec = tween(if (isSelected) 800 else 0),
+        label = "",
+    )
+    val selectedOffsetY by animateDpAsState(
+        targetValue = if (isSelected) (-400).dp else 0.dp,
+        animationSpec = tween(800),
+        label = "",
+    )
+
+    val isDoneToSelect = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         doBefore()
@@ -143,10 +175,19 @@ private fun ThoughtCard(
         doAfter()
     }
 
+    LaunchedEffect(key1 = isSelected) {
+        if (isSelected) {
+            // do scale anim
+            weight.animateTo(0.5f)
+            isDoneToSelect.value = true
+        }
+    }
+
     GradientButton(
         modifier = modifier
-            .offset(x = lastX - (lastX - firstX) * weight.value)
-            .rotate(lastAngle - (lastAngle - firstAngle) * weight.value)
+            .offset(selectedOffsetX, selectedOffsetY)
+            .rotate(if (isDoneToSelect.value) 0f else lastAngle - (lastAngle - firstAngle) * weight.value)
+            .scale(if (isDoneToSelect.value) 2f else 1f)
             .border(
                 width = 5.dp,
                 color = White,
@@ -154,8 +195,10 @@ private fun ThoughtCard(
             ),
         elevation = ButtonDefaults.elevatedButtonElevation(),
         shape = MaterialTheme.shapes.medium,
-        onClick = {},
+        onClick = onClick,
     ) {
-        content()
+        if (isDoneToSelect.value) {
+            Text(text = content)
+        }
     }
 }
