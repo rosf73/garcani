@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
 import androidx.compose.runtime.Composable
@@ -22,8 +21,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.rosf73.garcani.ui.theme.Pink80
-import com.rosf73.garcani.ui.theme.Purple80
+import com.rosf73.garcani.ui.theme.CardGradient
 import com.rosf73.garcani.ui.theme.Transparent
 import com.rosf73.garcani.ui.theme.White
 
@@ -33,7 +31,7 @@ fun GradientButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     shape: Shape = ButtonDefaults.shape,
-    containerColor: Brush = Brush.verticalGradient(listOf(Pink80, Purple80)),
+    containerColor: Brush = CardGradient,
     contentColor: Color = White,
     disabledContentColor: Color = White,
     elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),

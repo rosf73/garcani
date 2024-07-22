@@ -33,6 +33,9 @@ import androidx.compose.ui.unit.dp
 import com.google.ai.client.generativeai.GenerativeModel
 import com.rosf73.garcani.ui.anim.animateFloatAsState
 import com.rosf73.garcani.ui.core.GradientButton
+import com.rosf73.garcani.ui.theme.CardFrontGradient
+import com.rosf73.garcani.ui.theme.CardGradient
+import com.rosf73.garcani.ui.theme.PurpleGrey40
 import com.rosf73.garcani.ui.theme.White
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -193,12 +196,15 @@ private fun ThoughtCard(
                 color = White,
                 shape = MaterialTheme.shapes.medium,
             ),
-        elevation = ButtonDefaults.elevatedButtonElevation(),
+        containerColor = if (isDoneToSelect.value) CardFrontGradient else CardGradient,
+        elevation = ButtonDefaults.elevatedButtonElevation(
+            defaultElevation = if (isDoneToSelect.value) 20.dp else 1.dp
+        ),
         shape = MaterialTheme.shapes.medium,
         onClick = onClick,
     ) {
         if (isDoneToSelect.value) {
-            Text(text = content)
+            Text(text = content, color = PurpleGrey40)
         }
     }
 }
