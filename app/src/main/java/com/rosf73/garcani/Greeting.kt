@@ -109,6 +109,7 @@ fun Greeting(
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
                         .aspectRatio(3f / 2f),
+                    uiState = uiState,
                     onClickLeft = {
                         textList.add("Okay, let's see...")
                         viewModel.updateThoughtDeckState()
@@ -129,7 +130,7 @@ fun Greeting(
                         textList.add(text)
                     },
                     onClose = {
-                        // TODO : Roll back odyssey
+                        viewModel.updateOdysseyDeckState()
                     }
                 )
             }

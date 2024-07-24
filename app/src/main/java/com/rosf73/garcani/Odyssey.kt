@@ -27,6 +27,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun Odyssey(
     modifier: Modifier = Modifier,
+    uiState: DeckUiState, // for clear anim progress
     onClickLeft: () -> Unit,
     onClickRight: () -> Unit,
 ) {
@@ -34,7 +35,7 @@ fun Odyssey(
     val init2 = remember { mutableFloatStateOf(-5f) }
     val target1 = remember { mutableFloatStateOf(0.5f) }
     val target2 = remember { mutableFloatStateOf(0.5f) }
-    var isLeftFast = true
+    val isLeftFast = remember { mutableStateOf(true) }
     val isClicked = remember { mutableStateOf(false) }
 
     Row(
@@ -47,7 +48,7 @@ fun Odyssey(
             initOffset = init1.floatValue,
             targetOffset = target1.floatValue,
             duration = if (isClicked.value) 600 else 2000,
-            doBefore = { if (!isLeftFast) delay(200) },
+            doBefore = { if (!isLeftFast.value) delay(200) },
             onClick = {
                 // 위로 살짝
                 init1.floatValue = 0.5f
@@ -55,7 +56,7 @@ fun Odyssey(
                 init2.floatValue = 0.5f
                 target2.floatValue = 0.35f
 
-                isLeftFast = true
+                isLeftFast.value = true
                 isClicked.value = true
             },
             doAfter = if (isClicked.value) {{
@@ -66,7 +67,7 @@ fun Odyssey(
                 target2.floatValue = 1.5f
 
                 delay(600)
-                if (isLeftFast) onClickLeft()
+                if (isLeftFast.value) onClickLeft()
             }} else {{}}
         ) {
             Text(text = "Thought Card")
@@ -79,26 +80,25 @@ fun Odyssey(
             initOffset = init2.floatValue,
             targetOffset = target2.floatValue,
             duration = if (isClicked.value) 600 else 2000,
-            doBefore = { if (isLeftFast) delay(200) },
+            doBefore = { if (isLeftFast.value) delay(200) },
             onClick = {
-                // 위로 살짝
-                init1.floatValue = 0.5f
-                target1.floatValue = 0.35f
-                init2.floatValue = 0.5f
-                target2.floatValue = 0.35f
-
-                isLeftFast = false
-                isClicked.value = true
+                // TODO : tarot
+//                init1.floatValue = 0.5f
+//                target1.floatValue = 0.35f
+//                init2.floatValue = 0.5f
+//                target2.floatValue = 0.35f
+//
+//                isLeftFast.value = false
+//                isClicked.value = true
             },
             doAfter = if (isClicked.value) {{
-                // 아래로 사라지기
                 init1.floatValue = 0.35f
                 target1.floatValue = 1.5f
                 init2.floatValue = 0.35f
                 target2.floatValue = 1.5f
 
                 delay(600)
-                if (!isLeftFast) onClickRight()
+                if (!isLeftFast.value) onClickRight()
             }} else {{}}
         ) {
             Text(text = "Tarot")
