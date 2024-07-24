@@ -1,5 +1,6 @@
 package com.rosf73.garcani.ui.theme
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -19,3 +20,7 @@ val BlackCC = Color(0xCC000000)
 val White = Color(0xFFFFFFFF)
 val WhiteCC = Color(0xCCFFFFFF)
 val Transparent = Color(0x00FFFFFF)
+
+// Brush
+val CardGradient = Brush.verticalGradient(listOf(Pink80, Purple80))
+val CardFrontGradient = Brush.verticalGradient(listOf(White, White))
