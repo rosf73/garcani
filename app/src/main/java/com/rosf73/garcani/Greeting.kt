@@ -121,6 +121,9 @@ fun Greeting(
                         .align(Alignment.BottomCenter),
                     speech = { text ->
                         textList.add(text)
+                    },
+                    onClose = {
+                        // TODO : Roll back odyssey
                     }
                 )
             }

@@ -47,6 +47,7 @@ fun Deck(
     modifier: Modifier = Modifier,
     model: GenerativeModel,
     speech: suspend (String) -> Unit,
+    onClose: () -> Unit,
 ) {
     val quoteList = remember { mutableStateListOf<String>() }
     var isDoneRequest = false
@@ -85,6 +86,7 @@ fun Deck(
             list = quoteList,
             initY = init.floatValue,
             targetY = target.floatValue,
+            onClose = onClose,
         )
     }
 }
@@ -95,6 +97,7 @@ private fun CircularDeck(
     list: List<String>,
     initY: Float,
     targetY: Float,
+    onClose: () -> Unit,
 ) {
     val upDuration = 2000
     val cardCount = 10
@@ -129,6 +132,8 @@ private fun CircularDeck(
                 onClick = {
                     if (selectedCard.intValue < 0) {
                         selectedCard.intValue = it
+                    } else if (selectedCard.intValue == it) {
+                        onClose()
                     }
                 },
             ) {

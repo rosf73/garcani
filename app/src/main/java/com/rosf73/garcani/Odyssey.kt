@@ -64,9 +64,6 @@ fun Odyssey(
                 init2.floatValue = 0.35f
                 target2.floatValue = 1.5f
 
-                isLeftFast = true
-                isClicked.value = true
-
                 if (!isLeftFast) onClick()
             }} else {{}}
         ) {
@@ -97,9 +94,6 @@ fun Odyssey(
                 target1.floatValue = 1.5f
                 init2.floatValue = 0.35f
                 target2.floatValue = 1.5f
-
-                isLeftFast = true
-                isClicked.value = true
 
                 if (isLeftFast) onClick()
             }} else {{}}
