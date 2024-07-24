@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,12 +33,13 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun Greeting(
-    model: GenerativeModel,
+    viewModel: MainViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val uiState by viewModel.deckState.collectAsState()
+    val model = viewModel.generativeModel
+
     val textList = remember { mutableStateListOf("...") }
-    var isDoneToGreeting by remember { mutableStateOf(false) }
-    var didChooseOdyssey by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = model) {
 //        val prompt = """
@@ -70,7 +72,8 @@ fun Greeting(
                 }
             }
         }
-        isDoneToGreeting = true
+
+        viewModel.updateOdysseyDeckState()
     }
 
     Scaffold(
@@ -100,20 +103,23 @@ fun Greeting(
                     .align(Alignment.Center),
             )
 
-            if (isDoneToGreeting) {
+            if (uiState == DeckUiState.OdysseyDeck) {
                 Odyssey(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
                         .aspectRatio(3f / 2f),
-                    onClick = {
+                    onClickLeft = {
                         textList.add("Okay, let's see...")
-                        didChooseOdyssey = true
+                        viewModel.updateThoughtDeckState()
+                    },
+                    onClickRight = {
+                        viewModel.updateTarotDeckState()
                     }
                 )
             }
 
-            if (didChooseOdyssey) {
+            if (uiState == DeckUiState.ThoughtDeck) {
                 Deck(
                     model = model,
                     modifier = Modifier
@@ -126,6 +132,10 @@ fun Greeting(
                         // TODO : Roll back odyssey
                     }
                 )
+            }
+
+            if (uiState == DeckUiState.TarotDeck) {
+                // TODO : Show tarot
             }
         }
     }

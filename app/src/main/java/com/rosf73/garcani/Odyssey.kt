@@ -27,7 +27,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun Odyssey(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClickLeft: () -> Unit,
+    onClickRight: () -> Unit,
 ) {
     val init1 = remember { mutableFloatStateOf(-5f) }
     val init2 = remember { mutableFloatStateOf(-5f) }
@@ -64,7 +65,8 @@ fun Odyssey(
                 init2.floatValue = 0.35f
                 target2.floatValue = 1.5f
 
-                if (!isLeftFast) onClick()
+                delay(600)
+                if (isLeftFast) onClickLeft()
             }} else {{}}
         ) {
             Text(text = "Thought Card")
@@ -95,7 +97,8 @@ fun Odyssey(
                 init2.floatValue = 0.35f
                 target2.floatValue = 1.5f
 
-                if (isLeftFast) onClick()
+                delay(600)
+                if (!isLeftFast) onClickRight()
             }} else {{}}
         ) {
             Text(text = "Tarot")
