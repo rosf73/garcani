@@ -2,8 +2,6 @@ package com.rosf73.garcani.feature.thought
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateIntOffsetAsState
-import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -21,14 +19,11 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.google.ai.client.generativeai.GenerativeModel
 import com.rosf73.garcani.ui.anim.animateFloatAsState
@@ -43,7 +38,7 @@ import kotlinx.coroutines.delay
 
 // Gemini pick random 10 quotes
 @Composable
-fun Deck(
+fun ThoughtDeck(
     modifier: Modifier = Modifier,
     model: GenerativeModel,
     speech: suspend (String) -> Unit,
