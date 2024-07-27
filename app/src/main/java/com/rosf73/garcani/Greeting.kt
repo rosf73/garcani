@@ -38,27 +38,12 @@ fun Greeting(
 
     val textList = remember { mutableStateListOf("...") }
 
-    LaunchedEffect(key1 = model) {
-//        val prompt = """
-//            You are a fortune teller from now on.
-//            And... your name is GArcani.
-//            Please add a line break at the end of every sentence.
-//        """.trimIndent()
-//        val response = model.generateContent(prompt)
-        data class Response(val text: String?)
-        delay(3000)
-        textList.clear()
-        val response = Response(text = "Greetings, seeker of paths unseen.\n" +
-                "GArcani is the name, and deciphering destinies is my calling.\n" +
-                "I read the threads of fate woven within the tapestry of time, a weaver of whispers and a herald of what might be.\n" +
-                "Come, let the cards reveal your story.\n" +
-                "What is it you wish to know?")
-        val lines = response.text?.replace("!", ".")?.split(Regex("\n"))
-        lines?.forEachIndexed { i, line ->
+    suspend fun List<String>.speechEachLine() {
+        forEachIndexed { i, line ->
             if (line.isNotBlank() && line.trim().isNotEmpty()) {
                 textList.add(line)
                 // time for reading
-                if (lines.lastIndex != i) {
+                if (lastIndex != i) {
                     if (line.length > 50) {
                         delay(5000)
                     } else if (line.length > 30) {
@@ -69,6 +54,17 @@ fun Greeting(
                 }
             }
         }
+    }
+
+    LaunchedEffect(key1 = model) {
+        val prompt = """
+            You are a fortune teller from now on.
+            And... your name is GArcani.
+            Please add a line break at the end of every sentence.
+        """.trimIndent()
+        val response = model.generateContent(prompt)
+        val lines = response.text?.replace("!", ".")?.split(Regex("\n"))
+        lines?.speechEachLine()
 
         viewModel.updateOdysseyDeckState()
     }
@@ -124,7 +120,7 @@ fun Greeting(
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter),
                     speech = { text ->
-                        textList.add(text)
+                        text.split("\n").speechEachLine()
                     },
                     onClose = {
                         viewModel.updateOdysseyDeckState()
