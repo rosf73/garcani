@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
+import com.rosf73.garcani.feature.tarot.TarotDeck
+import com.rosf73.garcani.feature.tarot.TarotViewModel
 import com.rosf73.garcani.feature.thought.ThoughtDeck
 import com.rosf73.garcani.ui.anim.Shadow
 import com.rosf73.garcani.ui.anim.WaveCircle
@@ -31,6 +33,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun Greeting(
     viewModel: MainViewModel,
+    tarotViewModel: TarotViewModel,
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.deckState.collectAsState()
@@ -129,7 +132,19 @@ fun Greeting(
             }
 
             if (uiState == DeckUiState.TarotDeck) {
-                // TODO : Show tarot
+                TarotDeck(
+                    model = model,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .align(Alignment.Center),
+                    viewModel = tarotViewModel,
+                    speech = { text ->
+                        text.split("\n").speechEachLine()
+                    },
+                    onClose = {
+                        viewModel.updateOdysseyDeckState()
+                    }
+                )
             }
         }
     }

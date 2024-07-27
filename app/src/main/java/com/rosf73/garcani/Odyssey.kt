@@ -82,14 +82,13 @@ fun Odyssey(
             duration = if (isClicked.value) 600 else 2000,
             doBefore = { if (isLeftFast.value) delay(200) },
             onClick = {
-                // TODO : tarot
-//                init1.floatValue = 0.5f
-//                target1.floatValue = 0.35f
-//                init2.floatValue = 0.5f
-//                target2.floatValue = 0.35f
-//
-//                isLeftFast.value = false
-//                isClicked.value = true
+                init1.floatValue = 0.5f
+                target1.floatValue = 0.35f
+                init2.floatValue = 0.5f
+                target2.floatValue = 0.35f
+
+                isLeftFast.value = false
+                isClicked.value = true
             },
             doAfter = if (isClicked.value) {{
                 init1.floatValue = 0.35f
