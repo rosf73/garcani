@@ -21,8 +21,8 @@ class TarotViewModel : ViewModel() {
         _tarotState.value = TarotUiState.Spread(type)
     }
 
-    fun updateInterpretationTarotState() {
-        _tarotState.value = TarotUiState.Interpretation
+    fun updateInterpretationTarotState(result: String) {
+        _tarotState.value = TarotUiState.Interpretation(result)
     }
 
     fun analyzeSpreadParagraph(paragraph: String): Pair<SpreadType?, String> {
@@ -64,7 +64,7 @@ sealed interface TarotUiState {
     data object Ready : TarotUiState
     data object Question : TarotUiState
     data class Spread(val type: SpreadType) : TarotUiState
-    data object Interpretation : TarotUiState
+    data class Interpretation(val result: String) : TarotUiState
 }
 
 enum class SpreadType {

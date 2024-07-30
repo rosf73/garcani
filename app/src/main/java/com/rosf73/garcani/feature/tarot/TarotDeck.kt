@@ -1,8 +1,8 @@
 package com.rosf73.garcani.feature.tarot
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -34,8 +33,7 @@ fun TarotDeck(
     speech: suspend (String) -> Unit,
     onClose: () -> Unit,
 ) {
-    val uiState = viewModel.tarotState.collectAsState()
-    val selectedList = remember { mutableStateListOf<String>() }
+    val uiState by viewModel.tarotState.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -44,22 +42,14 @@ fun TarotDeck(
         speech("Please ask your question in sentences of at least 10 characters.")
         delay(500)
         viewModel.updateQuestionTarotState()
-
-        // 2. select spread
-
-        // 3. waiting for selecting cards
-
-        // 4. interpret of each card
-
-        // 5. say comprehensive evaluation
     }
 
     Box(
         modifier = modifier,
     ) {
-        when (uiState.value) {
+        when (uiState) {
             TarotUiState.Ready -> {}
-            TarotUiState.Question -> {
+            TarotUiState.Question -> { // 2. select spread
                 Question(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -77,10 +67,13 @@ fun TarotDeck(
                             """.trimIndent() // TODO : chat style?
                             val response = model.generateContent(prompt)
                             response.text?.let { res ->
-                                Log.d("testest", res)
                                 val (spread, reason) = viewModel.analyzeSpreadParagraph(res)
                                 if (spread == null) {
-                                    Log.d("testest", "sentence is wrong. $question")
+                                    if (reason.isBlank()) {
+                                        speech("I'm having trouble understanding your question.")
+                                    } else {
+                                        speech(reason)
+                                    }
                                 } else {
                                     viewModel.updateSpreadTarotState(spread)
                                     speech(reason)
@@ -90,10 +83,29 @@ fun TarotDeck(
                     }
                 )
             }
-            is TarotUiState.Spread -> {
+            is TarotUiState.Spread -> { // 3. waiting for selecting cards
+                when ((uiState as TarotUiState.Spread).type) {
+                    SpreadType.ONE_CARD ->
+                        OneCardSpread(
+                            modifier = Modifier.fillMaxSize(),
+                        ) { card ->
 
+                        }
+                    SpreadType.THREE_CARD ->
+                        ThreeCardSpread(
+                            modifier = Modifier.fillMaxSize(),
+                        ) { first, second, third ->
+
+                        }
+                    SpreadType.CELTIC_CROSS ->
+                        CelticCrossSpread(
+                            modifier = Modifier.fillMaxSize(),
+                        ) { cardList ->
+
+                        }
+                }
             }
-            TarotUiState.Interpretation -> {
+            is TarotUiState.Interpretation -> { // 4. interpret of each card and comprehensive evaluation
 
             }
         }
