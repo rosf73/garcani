@@ -24,3 +24,4 @@ val Transparent = Color(0x00FFFFFF)
 // Brush
 val CardGradient = Brush.verticalGradient(listOf(Pink80, Purple80))
 val CardFrontGradient = Brush.verticalGradient(listOf(White, White))
+val CardDisableGradient = Brush.verticalGradient(listOf(Pink40, Purple40))
