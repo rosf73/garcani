@@ -1,6 +1,8 @@
 package com.rosf73.garcani.feature.tarot
 
 import androidx.lifecycle.ViewModel
+import com.google.ai.client.generativeai.type.Content
+import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -8,6 +10,9 @@ class TarotViewModel : ViewModel() {
 
     private val _tarotState = MutableStateFlow<TarotUiState>(TarotUiState.Ready)
     val tarotState = _tarotState.asStateFlow()
+
+    private val _history = mutableListOf<Content>()
+    val history: List<Content> = _history
 
     fun clearTarotState() {
         _tarotState.value = TarotUiState.Ready
@@ -23,6 +28,14 @@ class TarotViewModel : ViewModel() {
 
     fun updateInterpretationTarotState(result: String) {
         _tarotState.value = TarotUiState.Interpretation(result)
+    }
+
+    fun addSpreadPrompt(prompt: String) {
+        _history.add(content(role = "user") { text(prompt) })
+    }
+
+    fun addSpreadResponse(response: String) {
+        _history.add(content(role = "model") { text(response) })
     }
 
     fun analyzeSpreadParagraph(paragraph: String): Pair<SpreadType?, String> {

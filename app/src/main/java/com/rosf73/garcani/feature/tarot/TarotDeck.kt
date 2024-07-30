@@ -64,6 +64,8 @@ fun TarotDeck(
                                         speech(reason)
                                     }
                                 } else {
+                                    viewModel.addSpreadPrompt(prompt)
+                                    viewModel.addSpreadResponse(res)
                                     viewModel.updateSpreadTarotState(spread)
                                     speech(reason)
                                 }
@@ -78,24 +80,66 @@ fun TarotDeck(
                         OneCardSpread(
                             modifier = Modifier.fillMaxSize(),
                         ) { card ->
-
+                            coroutineScope.launch {
+                                val chat = model.startChat(history = viewModel.history)
+                                val response = chat.sendMessage("""
+                                    I drew "$card" card.
+                                    Please briefly interpret it in relation to [question].
+                                    Add a line break at the end of each sentence.
+                                """.trimIndent())
+                                if (!response.text.isNullOrBlank()) {
+                                    viewModel.updateInterpretationTarotState(response.text!!)
+                                } else {
+                                    // retry
+                                }
+                            }
                         }
                     SpreadType.THREE_CARD ->
                         ThreeCardSpread(
                             modifier = Modifier.fillMaxSize(),
                         ) { first, second, third ->
-
+                            coroutineScope.launch {
+                                val chat = model.startChat(history = viewModel.history)
+                                val response = chat.sendMessage("""
+                                    I drew "$first" first, "$second" second, and "$third" card third.
+                                    After briefly interpreting each card in relation to [question],
+                                    kindly write a comprehensive evaluation.
+                                    Add a line break at the end of each sentence.
+                                """.trimIndent())
+                                if (!response.text.isNullOrBlank()) {
+                                    viewModel.updateInterpretationTarotState(response.text!!)
+                                } else {
+                                    // retry
+                                }
+                            }
                         }
                     SpreadType.CELTIC_CROSS ->
                         CelticCrossSpread(
                             modifier = Modifier.fillMaxSize(),
                         ) { cardList ->
-
+                            coroutineScope.launch {
+                                val chat = model.startChat(history = viewModel.history)
+                                val response = chat.sendMessage("""
+                                    I drew the cards $cardList in order.
+                                    After briefly interpreting each card in relation to [question],
+                                    kindly write a comprehensive evaluation.
+                                    Add a line break at the end of each sentence.
+                                """.trimIndent())
+                                if (!response.text.isNullOrBlank()) {
+                                    viewModel.updateInterpretationTarotState(response.text!!)
+                                } else {
+                                    // retry
+                                }
+                            }
                         }
                 }
             }
             is TarotUiState.Interpretation -> { // 4. interpret of each card and comprehensive evaluation
-
+                val interpretation = (uiState as TarotUiState.Interpretation).result
+                Interpretation(
+                    modifier = Modifier.fillMaxSize(),
+                    result = interpretation,
+                )
             }
         }
     }
