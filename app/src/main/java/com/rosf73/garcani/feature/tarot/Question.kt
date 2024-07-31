@@ -2,6 +2,7 @@ package com.rosf73.garcani.feature.tarot
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,7 +25,9 @@ fun Question(
     var text by remember { mutableStateOf("") }
 
     Column(
-        modifier = modifier.padding(15.dp),
+        modifier = modifier
+            .imePadding()
+            .padding(15.dp),
     ) {
         // TODO : mic
 
