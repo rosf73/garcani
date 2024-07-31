@@ -3,11 +3,17 @@ package com.rosf73.garcani.feature.tarot.spread
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun OneCardSpread(
@@ -17,6 +23,9 @@ fun OneCardSpread(
     onInterpret: (String) -> Unit,
 ) {
     val uiState = remember { mutableStateOf<OneCardState>(OneCardState.Ready) }
+    var isOpened by remember { mutableStateOf(false) }
+
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = selectedCard) {
         if (selectedCard != null) {
@@ -24,27 +33,29 @@ fun OneCardSpread(
             delay(800)
             uiState.value = OneCardState.Opening(selectedCard.value) // as only 1 card is needed
             onDoneSelecting(selectedCard.key)
-            delay(1200)
-            onInterpret(selectedCard.key)
         }
     }
 
-    when (uiState.value) {
-        OneCardState.Ready -> {}
-        OneCardState.Selecting -> {
-            SpreadCard(
-                modifier = modifier.size(120.dp, 180.dp),
-                isOpened = false,
-            )
-        }
-        is OneCardState.Opening -> {
-            SpreadCard(
-                modifier = modifier.size(120.dp, 180.dp),
-                isOpened = true,
-            ) {
-                // TODO : add tarot card image
-            }
-        }
+    if (uiState.value != OneCardState.Ready && !isOpened) {
+        SpreadCard(
+            modifier = modifier.size(120.dp, 180.dp),
+        )
+    }
+
+    if (uiState.value is OneCardState.Opening) {
+        AsyncImage(
+            modifier = modifier.size(120.dp, 180.dp),
+            model = (uiState.value as OneCardState.Opening).imageUrl,
+            contentScale = ContentScale.Fit,
+            onSuccess = {
+                isOpened = true
+                coroutineScope.launch {
+                    delay(1200)
+                    onInterpret(selectedCard!!.key)
+                }
+            },
+            contentDescription = null,
+        )
     }
 }
 
