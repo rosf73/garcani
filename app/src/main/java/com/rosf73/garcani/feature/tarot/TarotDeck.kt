@@ -1,6 +1,7 @@
 package com.rosf73.garcani.feature.tarot
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -84,8 +85,11 @@ fun TarotDeck(
             is TarotUiState.Interpretation -> { // 4. interpret of each card and comprehensive evaluation
                 val interpretation = (uiState as TarotUiState.Interpretation).result
                 Interpretation(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.align(Alignment.Center)
+                        .fillMaxWidth(0.9f)
+                        .fillMaxHeight(0.75f),
                     result = interpretation,
+                    onClickClose = onClose,
                 )
             }
         }
