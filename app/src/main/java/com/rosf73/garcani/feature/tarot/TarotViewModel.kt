@@ -1,10 +1,13 @@
 package com.rosf73.garcani.feature.tarot
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.Content
 import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class TarotViewModel : ViewModel() {
 
@@ -70,6 +73,18 @@ class TarotViewModel : ViewModel() {
         }
 
         return spread to reason
+    }
+
+    fun sendSpreadChat(model: GenerativeModel, message: String) {
+        viewModelScope.launch {
+            val chat = model.startChat(history = history)
+            val response = chat.sendMessage(message)
+            if (!response.text.isNullOrBlank()) {
+                updateInterpretationTarotState(response.text!!)
+            } else {
+                // retry
+            }
+        }
     }
 }
 
