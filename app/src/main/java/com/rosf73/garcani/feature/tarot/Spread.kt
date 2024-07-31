@@ -2,10 +2,11 @@ package com.rosf73.garcani.feature.tarot
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ButtonDefaults
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rosf73.garcani.feature.tarot.spread.OneCardSpread
+import com.rosf73.garcani.feature.tarot.spread.ThreeCardSpread
 import com.rosf73.garcani.localdata.Tarot
 import com.rosf73.garcani.ui.core.GradientButton
 import com.rosf73.garcani.ui.theme.CardDisableGradient
@@ -84,20 +86,12 @@ fun Spread(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter),
-            cardList = cards.keys.toList(),
+            cardList = cards.keys.toList().shuffled(),
             onSelect = {
                 selectedCards[it] = cards[it]!!
             }
         )
     }
-}
-
-@Composable
-private fun ThreeCardSpread(
-    modifier: Modifier = Modifier,
-    selectedCards: Map<String, String>,
-    onDone: (String, String, String) -> Unit,
-) {
 }
 
 @Composable
@@ -120,10 +114,10 @@ private fun CardPack(
         modifier = modifier,
     ) {
         itemsIndexed(cardList, key = { _, it -> it }) { i, data ->
+            Spacer(modifier = Modifier.width(5.dp))
             Card(
                 modifier = Modifier
-                    .size(100.dp, 150.dp)
-                    .offset(x = (-20).dp * i),
+                    .size(100.dp, 150.dp),
                 data = data,
                 enabled = !selectedList.contains(i),
                 onClick = {
@@ -131,6 +125,7 @@ private fun CardPack(
                     onSelect(data)
                 },
             )
+            Spacer(modifier = Modifier.width(5.dp))
         }
     }
 }
@@ -147,14 +142,14 @@ private fun Card(
             .border(
                 width = 5.dp,
                 color = White,
-                shape = MaterialTheme.shapes.medium,
+                shape = MaterialTheme.shapes.extraSmall,
             ),
         containerColor = if (enabled) CardGradient else CardDisableGradient,
         elevation = ButtonDefaults.elevatedButtonElevation(
             defaultElevation = 5.dp
         ),
         enabled = enabled,
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.extraSmall,
         onClick = onClick,
     ) {
     }

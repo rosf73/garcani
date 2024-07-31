@@ -14,7 +14,6 @@ import com.rosf73.garcani.ui.theme.White
 @Composable
 fun SpreadCard(
     modifier: Modifier,
-    isOpened: Boolean,
     content: @Composable () -> Unit = {},
 ) {
     GradientButton(
@@ -22,14 +21,14 @@ fun SpreadCard(
             .border(
                 width = 5.dp,
                 color = White,
-                shape = MaterialTheme.shapes.medium,
+                shape = MaterialTheme.shapes.extraSmall,
             ),
-        containerColor = if (isOpened) CardFrontGradient else CardGradient,
+        containerColor = CardGradient,
         elevation = ButtonDefaults.elevatedButtonElevation(
             defaultElevation = 10.dp
         ),
         enabled = false,
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.extraSmall,
         onClick = {},
     ) {
         content()

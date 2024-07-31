@@ -28,7 +28,7 @@ fun TarotDeck(
 
     LaunchedEffect(key1 = model) {
         // 1. question to user
-        speech("Please ask your question in sentences of at least 10 characters.")
+        speech("Please tell me your concerns.\nThe more detailed the content, the deeper the interpretation.")
         delay(500)
         viewModel.updateQuestionTarotState()
     }
