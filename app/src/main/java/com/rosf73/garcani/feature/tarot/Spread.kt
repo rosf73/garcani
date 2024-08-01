@@ -41,6 +41,13 @@ fun Spread(
     val cardNames = remember {
         cards.keys.toList().shuffled()
     }
+    val selectableCount = remember {
+        when (uiState.type) {
+            SpreadType.ONE_CARD -> 1
+            SpreadType.THREE_CARD -> 3
+            SpreadType.CELTIC_CROSS -> 10
+        }
+    }
 
     val selectedCards = remember { mutableStateMapOf<String, String>() }
     var isDoneSelection by remember { mutableStateOf(false) }
@@ -106,7 +113,9 @@ fun Spread(
                     .align(Alignment.BottomCenter),
                 cardList = cardNames,
                 onSelect = {
-                    selectedCards[it] = cards[it]!!
+                    if (selectedCards.size < selectableCount) {
+                        selectedCards[it] = cards[it]!!
+                    }
                 }
             )
         }
