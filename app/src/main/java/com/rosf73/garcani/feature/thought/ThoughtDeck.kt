@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -35,6 +36,7 @@ import com.rosf73.garcani.ui.theme.White
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 // Gemini pick random 10 quotes
 @Composable
@@ -46,6 +48,9 @@ fun ThoughtDeck(
 ) {
     val quoteList = remember { mutableStateListOf<String>() }
     var isDoneRequest = false
+
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(key1 = model) {
         awaitAll(
             async {
@@ -81,6 +86,11 @@ fun ThoughtDeck(
             list = quoteList,
             initY = init.floatValue,
             targetY = target.floatValue,
+            onSelect = {
+                coroutineScope.launch {
+                    speech("\"$it\"")
+                }
+            },
             onClose = onClose,
         )
     }
@@ -92,6 +102,7 @@ private fun CircularDeck(
     list: List<String>,
     initY: Float,
     targetY: Float,
+    onSelect: (String) -> Unit,
     onClose: () -> Unit,
 ) {
     val upDuration = 2000
@@ -127,6 +138,7 @@ private fun CircularDeck(
                 onClick = {
                     if (selectedCard.intValue < 0) {
                         selectedCard.intValue = it
+                        onSelect(list[it])
                     } else if (selectedCard.intValue == it) {
                         onClose()
                     }
