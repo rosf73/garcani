@@ -34,11 +34,18 @@ fun TarotDeck(
         viewModel.updateQuestionTarotState()
     }
 
+    LaunchedEffect(key1 = uiState) {
+        if (uiState is TarotUiState.Ready && (uiState as TarotUiState.Ready).isFailure) {
+            speech("Something is wrong with Gemini.\nPlease wait a moment and try again.")
+            onClose()
+        }
+    }
+
     Box(
         modifier = modifier,
     ) {
         when (uiState) {
-            TarotUiState.Ready -> {}
+            is TarotUiState.Ready -> {}
             TarotUiState.Question -> { // 2. select spread
                 Question(
                     modifier = Modifier
@@ -46,18 +53,9 @@ fun TarotDeck(
                         .align(Alignment.BottomCenter),
                     onDone = { question ->
                         coroutineScope.launch {
-                            val prompt = """
-                                You are a Tarot expert.
-                                Understand the [Questions] below and select one of the “One Card”, “Three Card” or “Celtic Cross” spreads and mark them after [Spread].
-                                And after [Reason], briefly state the reason for your choice in relation to the [Question].
-                                Also if the question is not a complete sentence, write “None” after [Spread].
-                                [Question]: $question
-                                [Spread]:
-                                [reason]:
-                            """.trimIndent() // TODO : chat style?
-                            val response = model.generateContent(prompt)
-                            response.text?.let { res ->
-                                val (spread, reason) = viewModel.analyzeSpreadParagraph(res)
+                            val response = viewModel.sendSpreadPrompt(model, question)
+                            if (response.isNotBlank()) {
+                                val (spread, reason) = viewModel.analyzeSpreadParagraph(response)
                                 if (spread == null) {
                                     if (reason.isBlank()) {
                                         speech("I'm having trouble understanding your question.")
@@ -65,8 +63,6 @@ fun TarotDeck(
                                         speech(reason)
                                     }
                                 } else {
-                                    viewModel.addSpreadPrompt(prompt)
-                                    viewModel.addSpreadResponse(res)
                                     viewModel.updateSpreadTarotState(spread)
                                     speech(reason)
                                 }
