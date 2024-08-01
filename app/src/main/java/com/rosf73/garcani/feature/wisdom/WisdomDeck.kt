@@ -60,18 +60,30 @@ fun WisdomDeck(
                 }
             },
             async {
-                val prompt = """
-                    Please select 30 short quotes of less than 60 characters
-                    and write 30 lines in the format of [number]:[content] without any additional words.
-                """.trimIndent()
-                val response = model.generateContent(prompt)
-                isDoneRequest = true
-                quoteList.addAll(
-                    response.text?.split("\n")?.map {
-                        it.split(":").last().trim()
-                    } ?: emptyList()
-                )
-                speech("Alright! Now, take your pick.") // TODO: temp
+                try {
+                    val prompt = """
+                        Please select 30 short quotes of less than 60 characters
+                        and write 30 lines in the format of [number]:[content] without any additional words.
+                    """.trimIndent()
+                    val response = model.generateContent(prompt)
+
+                    isDoneRequest = true
+                    if (response.text.isNullOrBlank()) { // fail
+                        speech("Something is wrong with Gemini.\nPlease wait a moment and try again.")
+                        onClose()
+                    } else { // success
+                        quoteList.addAll(
+                            response.text?.split("\n")?.map {
+                                it.split(":").last().trim()
+                            } ?: emptyList()
+                        )
+                        speech("Alright! Now, take your pick.") // TODO: temp
+                    }
+                } catch (e: com.google.ai.client.generativeai.type.GoogleGenerativeAIException) { // fail
+                    isDoneRequest = true
+                    speech("Something is wrong with Gemini.\nPlease wait a moment and try again.")
+                    onClose()
+                }
             }
         )
     }
