@@ -23,7 +23,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import com.rosf73.garcani.feature.tarot.TarotDeck
 import com.rosf73.garcani.feature.tarot.TarotViewModel
-import com.rosf73.garcani.feature.thought.ThoughtDeck
+import com.rosf73.garcani.feature.wisdom.WisdomDeck
 import com.rosf73.garcani.localdata.Speech
 import com.rosf73.garcani.ui.anim.Shadow
 import com.rosf73.garcani.ui.anim.WaveCircle
@@ -61,6 +61,8 @@ fun Greeting(
     }
 
     LaunchedEffect(key1 = model) {
+        delay(3000)
+        textList.clear()
         val prompt = """
             You are a fortune teller from now on.
             And... your name is GArcani.
@@ -109,7 +111,7 @@ fun Greeting(
                     uiState = uiState,
                     onClickLeft = {
                         textList.add(Speech(msg = "Okay, let's see..."))
-                        viewModel.updateThoughtDeckState()
+                        viewModel.updateWisdomDeckState()
                     },
                     onClickRight = {
                         viewModel.updateTarotDeckState()
@@ -117,8 +119,8 @@ fun Greeting(
                 )
             }
 
-            if (uiState == DeckUiState.ThoughtDeck) {
-                ThoughtDeck(
+            if (uiState == DeckUiState.WisdomDeck) {
+                WisdomDeck(
                     model = model,
                     modifier = Modifier
                         .fillMaxWidth()

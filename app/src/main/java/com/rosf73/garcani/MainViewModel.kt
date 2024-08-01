@@ -37,8 +37,8 @@ class MainViewModel : ViewModel() {
         _deckState.value = DeckUiState.OdysseyDeck
     }
 
-    fun updateThoughtDeckState() {
-        _deckState.value = DeckUiState.ThoughtDeck
+    fun updateWisdomDeckState() {
+        _deckState.value = DeckUiState.WisdomDeck
     }
 
     fun updateTarotDeckState() {
@@ -49,6 +49,6 @@ class MainViewModel : ViewModel() {
 sealed interface DeckUiState {
     data object Ready : DeckUiState
     data object OdysseyDeck : DeckUiState
-    data object ThoughtDeck : DeckUiState
+    data object WisdomDeck : DeckUiState
     data object TarotDeck : DeckUiState
 }

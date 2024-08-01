@@ -1,4 +1,4 @@
-package com.rosf73.garcani.feature.thought
+package com.rosf73.garcani.feature.wisdom
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 
 // Gemini pick random 10 quotes
 @Composable
-fun ThoughtDeck(
+fun WisdomDeck(
     modifier: Modifier = Modifier,
     model: GenerativeModel,
     speech: suspend (String) -> Unit,
@@ -123,7 +123,7 @@ private fun CircularDeck(
             },
     ) {
         repeat(cardCount) {
-            ThoughtCard(
+            WisdomCard(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxWidth(0.4f)
@@ -150,7 +150,7 @@ private fun CircularDeck(
 }
 
 @Composable
-private fun ThoughtCard(
+private fun WisdomCard(
     modifier: Modifier = Modifier,
     totalCount: Int,
     index: Int,
