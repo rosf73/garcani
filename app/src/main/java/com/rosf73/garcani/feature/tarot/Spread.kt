@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rosf73.garcani.feature.tarot.spread.CelticCrossSpread
 import com.rosf73.garcani.feature.tarot.spread.OneCardSpread
 import com.rosf73.garcani.feature.tarot.spread.ThreeCardSpread
 import com.rosf73.garcani.localdata.Tarot
@@ -79,16 +80,20 @@ fun Spread(
             }
             SpreadType.CELTIC_CROSS -> {
                 CelticCrossSpread(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.align(Alignment.Center),
                     selectedCards = selectedCards,
-                ) { cardList ->
-                    sendMessage("""
-                        I drew the cards $cardList in order.
-                        After briefly interpreting each card in relation to [question],
-                        kindly write a comprehensive evaluation.
-                        Add a line break at the end of each sentence.
-                    """.trimIndent())
-                }
+                    onDoneSelecting = { _ ->
+                        isDoneSelection = true
+                    },
+                    onInterpret = { cardList ->
+                        sendMessage("""
+                            I drew the cards $cardList in order.
+                            After briefly interpreting each card in relation to [question],
+                            kindly write a comprehensive evaluation.
+                            Add a line break at the end of each sentence.
+                        """.trimIndent())
+                    }
+                )
             }
         }
 
@@ -104,14 +109,6 @@ fun Spread(
             )
         }
     }
-}
-
-@Composable
-private fun CelticCrossSpread(
-    modifier: Modifier = Modifier,
-    selectedCards: Map<String, String>,
-    onDone: (List<String>) -> Unit,
-) {
 }
 
 @Composable
