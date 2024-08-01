@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.rosf73.garcani.feature.tarot.TarotDeck
 import com.rosf73.garcani.feature.tarot.TarotViewModel
 import com.rosf73.garcani.feature.thought.ThoughtDeck
+import com.rosf73.garcani.localdata.Speech
 import com.rosf73.garcani.ui.anim.Shadow
 import com.rosf73.garcani.ui.anim.WaveCircle
 import com.rosf73.garcani.ui.core.SpeechBubble
@@ -39,12 +40,12 @@ fun Greeting(
     val uiState by viewModel.deckState.collectAsState()
     val model = viewModel.generativeModel
 
-    val textList = remember { mutableStateListOf("...") }
+    val textList = remember { mutableStateListOf(Speech(msg = "...")) }
 
     suspend fun List<String>.speechEachLine() {
         forEachIndexed { i, line ->
             if (line.isNotBlank() && line.trim().isNotEmpty()) {
-                textList.add(line)
+                textList.add(Speech(msg = line))
                 // time for reading
                 if (lastIndex != i) {
                     if (line.length > 50) {
@@ -107,7 +108,7 @@ fun Greeting(
                         .aspectRatio(3f / 2f),
                     uiState = uiState,
                     onClickLeft = {
-                        textList.add("Okay, let's see...")
+                        textList.add(Speech(msg = "Okay, let's see..."))
                         viewModel.updateThoughtDeckState()
                     },
                     onClickRight = {

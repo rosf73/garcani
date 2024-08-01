@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
+import com.rosf73.garcani.localdata.Speech
 import com.rosf73.garcani.ui.theme.Transparent
 import com.rosf73.garcani.ui.theme.White
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SpeechBubble(
     modifier: Modifier = Modifier,
-    textList: List<String>,
+    textList: List<Speech>,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberLazyListState()
@@ -51,8 +52,8 @@ fun SpeechBubble(
                 item {
                     Spacer(modifier = Modifier.height(30.dp))
                 }
-                items(textList, key = { it }) { item ->
-                    GArcaniText(text = item)
+                items(textList, key = { it.number }) { item ->
+                    GArcaniText(text = item.msg)
                 }
 
                 coroutineScope.launch {
