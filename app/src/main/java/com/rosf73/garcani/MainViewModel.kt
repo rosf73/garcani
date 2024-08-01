@@ -5,6 +5,7 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.BlockThreshold
 import com.google.ai.client.generativeai.type.HarmCategory
 import com.google.ai.client.generativeai.type.SafetySetting
+import com.google.ai.client.generativeai.type.ServerException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -43,6 +44,28 @@ class MainViewModel : ViewModel() {
 
     fun updateTarotDeckState() {
         _deckState.value = DeckUiState.TarotDeck
+    }
+
+    suspend fun sendPrompt(prompt: String): Pair<String, Boolean> {
+        var resultMsg = ""
+        var result = false
+
+        try {
+            val response = generativeModel.generateContent(prompt)
+            if (response.text.isNullOrBlank()) {
+                resultMsg = "There was something wrong with the response.\nPlease wait a moment and try again."
+            } else {
+                resultMsg = response.text!!
+                result = true
+            }
+        } catch (e: com.google.ai.client.generativeai.type.GoogleGenerativeAIException) {
+            resultMsg = "Something is wrong with Gemini.\nPlease wait a moment and try again."
+        }
+
+        if (resultMsg.isBlank()) {
+            resultMsg = "There was something wrong with the response.\nPlease wait a moment and try again."
+        }
+        return resultMsg to result
     }
 }
 

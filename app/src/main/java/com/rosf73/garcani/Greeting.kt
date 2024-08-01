@@ -63,16 +63,20 @@ fun Greeting(
     LaunchedEffect(key1 = model) {
         delay(3000)
         textList.clear()
-        val prompt = """
+        val (response, isSuccess) = viewModel.sendPrompt("""
             You are a fortune teller from now on.
             And... your name is GArcani.
             Please add a line break at the end of every sentence.
-        """.trimIndent()
-        val response = model.generateContent(prompt)
-        val lines = response.text?.replace("!", ".")?.split(Regex("\n"))
-        lines?.speechEachLine()
+        """.trimIndent())
 
-        viewModel.updateOdysseyDeckState()
+        response
+            .replace("!", ".")
+            .split(Regex("\n"))
+            .speechEachLine()
+
+        if (isSuccess) {
+            viewModel.updateOdysseyDeckState()
+        }
     }
 
     Scaffold(
