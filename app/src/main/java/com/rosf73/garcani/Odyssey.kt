@@ -3,9 +3,12 @@ package com.rosf73.garcani
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
@@ -17,8 +20,10 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.rosf73.garcani.ui.anim.animateFloatAsState
 import com.rosf73.garcani.ui.core.GradientButton
@@ -75,7 +80,15 @@ fun Odyssey(
             }},
             enabled = isReady.value && !isClicked.value,
         ) {
-            Text(text = "Thought Card")
+            Column(modifier = Modifier.fillMaxSize()) {
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    text = "Thought Positive Card",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
         }
 
         Spacer(modifier = Modifier.width(15.dp))
@@ -106,7 +119,15 @@ fun Odyssey(
             }} else {{}},
             enabled = !isClicked.value,
         ) {
-            Text(text = "Tarot")
+            Column(modifier = Modifier.fillMaxSize()) {
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    text = "Tarot Card",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
         }
     }
 }
