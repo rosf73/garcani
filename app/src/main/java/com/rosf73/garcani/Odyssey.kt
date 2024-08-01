@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
@@ -68,7 +69,8 @@ fun Odyssey(
 
                 delay(600)
                 if (isLeftFast.value) onClickLeft()
-            }} else {{}}
+            }} else {{}},
+            enabled = !isClicked.value,
         ) {
             Text(text = "Thought Card")
         }
@@ -98,7 +100,8 @@ fun Odyssey(
 
                 delay(600)
                 if (!isLeftFast.value) onClickRight()
-            }} else {{}}
+            }} else {{}},
+            enabled = !isClicked.value,
         ) {
             Text(text = "Tarot")
         }
@@ -114,6 +117,7 @@ private fun OdysseyCard(
     duration: Int = 2000,
     doBefore: suspend () -> Unit = {},
     doAfter: suspend () -> Unit = {},
+    enabled: Boolean,
     onClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -138,6 +142,7 @@ private fun OdysseyCard(
             ),
         elevation = ButtonDefaults.elevatedButtonElevation(),
         shape = MaterialTheme.shapes.medium,
+        enabled = enabled,
         onClick = onClick,
     ) {
         content()
