@@ -3,18 +3,15 @@ package com.rosf73.garcani.feature.tarot
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,8 +34,13 @@ fun Spread(
     uiState: TarotUiState.Spread,
     sendMessage: (String) -> Unit,
 ) {
-    val cards = if (uiState.type == SpreadType.ONE_CARD) Tarot.majors
-                else Tarot.data
+    val cards = remember {
+        if (uiState.type == SpreadType.ONE_CARD) Tarot.majors
+        else Tarot.data
+    }
+    val cardNames = remember {
+        cards.keys.toList().shuffled()
+    }
 
     val selectedCards = remember { mutableStateMapOf<String, String>() }
     var isDoneSelection by remember { mutableStateOf(false) }
@@ -102,7 +104,7 @@ fun Spread(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter),
-                cardList = cards.keys.toList().shuffled(),
+                cardList = cardNames,
                 onSelect = {
                     selectedCards[it] = cards[it]!!
                 }
@@ -117,8 +119,6 @@ private fun CardPack(
     cardList: List<String>,
     onSelect: (String) -> Unit,
 ) {
-    val selectedList = remember { mutableStateListOf<String>() }
-
     LazyRow(
         modifier = modifier,
     ) {
@@ -127,9 +127,7 @@ private fun CardPack(
             Card(
                 modifier = Modifier
                     .size(100.dp, 150.dp),
-                enabled = !selectedList.contains(data),
                 onClick = {
-                    selectedList.add(data)
                     onSelect(data)
                 },
             )
@@ -141,9 +139,10 @@ private fun CardPack(
 @Composable
 private fun Card(
     modifier: Modifier = Modifier,
-    enabled: Boolean,
     onClick: () -> Unit,
 ) {
+    var enabled by remember { mutableStateOf(true) }
+
     GradientButton(
         modifier = modifier
             .border(
@@ -157,7 +156,10 @@ private fun Card(
         ),
         enabled = enabled,
         shape = MaterialTheme.shapes.extraSmall,
-        onClick = onClick,
+        onClick = {
+            onClick()
+            enabled = false
+        },
     ) {
     }
 }
