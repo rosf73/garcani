@@ -8,13 +8,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -36,6 +40,7 @@ fun Spread(
                 else Tarot.data
 
     val selectedCards = remember { mutableStateMapOf<String, String>() }
+    var isDoneSelection by remember { mutableStateOf(false) }
 
     Box(modifier = modifier) {
         when (uiState.type) {
@@ -44,7 +49,7 @@ fun Spread(
                     modifier = Modifier.align(Alignment.Center),
                     selectedCard = selectedCards.entries.firstOrNull(),
                     onDoneSelecting = {
-                        // TODO : do something
+                        isDoneSelection = true
                     },
                     onInterpret = { card ->
                         sendMessage("""
@@ -57,16 +62,20 @@ fun Spread(
             }
             SpreadType.THREE_CARD -> {
                 ThreeCardSpread(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.align(Alignment.Center),
                     selectedCards = selectedCards,
-                ) { first, second, third ->
-                    sendMessage("""
-                        I drew "$first" first, "$second" second, and "$third" card third.
-                        After briefly interpreting each card in relation to [question],
-                        kindly write a comprehensive evaluation.
-                        Add a line break at the end of each sentence.
-                    """.trimIndent())
-                }
+                    onDoneSelecting = { _, _, _ ->
+                        isDoneSelection = true
+                    },
+                    onInterpret = { first, second, third ->
+                        sendMessage("""
+                            I drew "$first" first, "$second" second, and "$third" card third.
+                            After briefly interpreting each card in relation to [question],
+                            kindly write a comprehensive evaluation.
+                            Add a line break at the end of each sentence.
+                        """.trimIndent())
+                    }
+                )
             }
             SpreadType.CELTIC_CROSS -> {
                 CelticCrossSpread(
@@ -82,15 +91,18 @@ fun Spread(
                 }
             }
         }
-        CardPack(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            cardList = cards.keys.toList().shuffled(),
-            onSelect = {
-                selectedCards[it] = cards[it]!!
-            }
-        )
+
+        if (!isDoneSelection) {
+            CardPack(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                cardList = cards.keys.toList().shuffled(),
+                onSelect = {
+                    selectedCards[it] = cards[it]!!
+                }
+            )
+        }
     }
 }
 
@@ -108,20 +120,19 @@ private fun CardPack(
     cardList: List<String>,
     onSelect: (String) -> Unit,
 ) {
-    val selectedList = remember { mutableStateListOf<Int>() }
+    val selectedList = remember { mutableStateListOf<String>() }
 
     LazyRow(
         modifier = modifier,
     ) {
-        itemsIndexed(cardList, key = { _, it -> it }) { i, data ->
+        items(cardList, key = { it }) { data ->
             Spacer(modifier = Modifier.width(5.dp))
             Card(
                 modifier = Modifier
                     .size(100.dp, 150.dp),
-                data = data,
-                enabled = !selectedList.contains(i),
+                enabled = !selectedList.contains(data),
                 onClick = {
-                    selectedList.add(i)
+                    selectedList.add(data)
                     onSelect(data)
                 },
             )
@@ -133,7 +144,6 @@ private fun CardPack(
 @Composable
 private fun Card(
     modifier: Modifier = Modifier,
-    data: String,
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
