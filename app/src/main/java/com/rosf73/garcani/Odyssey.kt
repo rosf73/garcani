@@ -36,6 +36,7 @@ fun Odyssey(
     val init2 = remember { mutableFloatStateOf(-5f) }
     val target1 = remember { mutableFloatStateOf(0.5f) }
     val target2 = remember { mutableFloatStateOf(0.5f) }
+    val isReady = remember { mutableStateOf(false) }
     val isLeftFast = remember { mutableStateOf(true) }
     val isClicked = remember { mutableStateOf(false) }
 
@@ -69,8 +70,10 @@ fun Odyssey(
 
                 delay(600)
                 if (isLeftFast.value) onClickLeft()
-            }} else {{}},
-            enabled = !isClicked.value,
+            }} else {{
+                isReady.value = true
+            }},
+            enabled = isReady.value && !isClicked.value,
         ) {
             Text(text = "Thought Card")
         }
