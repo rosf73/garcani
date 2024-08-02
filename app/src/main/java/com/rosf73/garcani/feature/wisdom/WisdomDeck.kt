@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -120,6 +121,8 @@ private fun CircularDeck(
     val upDuration = 2000
     val cardCount = 10
 
+    var enabled by remember { mutableStateOf(false) }
+
     val containerOffset by animateFloatAsState(
         initY,
         targetY,
@@ -155,8 +158,9 @@ private fun CircularDeck(
                         onClose()
                     }
                 },
-            ) {
-            }
+                doAfter = { enabled = true },
+                enabled = enabled,
+            )
         }
     }
 }
@@ -171,6 +175,7 @@ private fun WisdomCard(
     doBefore: suspend () -> Unit = {},
     onClick: () -> Unit,
     doAfter: suspend () -> Unit = {},
+    enabled: Boolean,
 ) {
     val firstAngle = -135f
     val lastAngle = -45f
@@ -224,6 +229,7 @@ private fun WisdomCard(
         elevation = ButtonDefaults.elevatedButtonElevation(
             defaultElevation = if (isDoneToSelect.value) 20.dp else 1.dp
         ),
+        enabled = enabled,
         shape = MaterialTheme.shapes.medium,
         onClick = onClick,
     ) {
