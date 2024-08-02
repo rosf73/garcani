@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import com.rosf73.garcani.ui.core.innerShadow
 import com.rosf73.garcani.ui.theme.WhiteCC
 import kotlin.random.Random
 
@@ -104,7 +106,13 @@ fun WaveCircle(
     )
 
     Canvas(
-        modifier = modifier,
+        modifier = modifier.innerShadow(
+            color = MaterialTheme.colorScheme.tertiary,
+            blur = 30.dp,
+            cornersRadius = 150.dp,
+            offsetX = 0.5.dp,
+            offsetY = 0.5.dp,
+        ),
     ) {
         val circlePath = Path().apply {
             addOval(
