@@ -20,10 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.rosf73.garcani.feature.tarot.TarotDeck
 import com.rosf73.garcani.feature.tarot.TarotViewModel
 import com.rosf73.garcani.feature.wisdom.WisdomDeck
+import com.rosf73.garcani.localdata.SharedPreference
 import com.rosf73.garcani.localdata.Speech
 import com.rosf73.garcani.ui.anim.Shadow
 import com.rosf73.garcani.ui.anim.WaveCircle
@@ -37,6 +39,8 @@ fun Greeting(
     tarotViewModel: TarotViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     val uiState by viewModel.deckState.collectAsState()
     val model = viewModel.generativeModel
 
@@ -61,14 +65,26 @@ fun Greeting(
     }
 
     LaunchedEffect(key1 = model) {
-        delay(3000)
-        textList.clear()
-        val (response, isSuccess) = viewModel.sendPrompt("""
-            You are a fortune teller from now on.
-            And... your name is GArcani.
-            Please add a line break at the end of every sentence.
-        """.trimIndent())
+        val preference = SharedPreference(context)
+        val greeting = preference.getGreeting()
 
+        val response: String
+        val isSuccess: Boolean
+        if (greeting.isNotBlank()) { // visited
+            val result = viewModel.sendGreetingChat(greeting)
+            response = result.first
+            isSuccess = result.second
+        } else {
+            val result = viewModel.sendGreetingPrompt()
+            response = result.first
+            isSuccess = result.second
+
+            if (isSuccess) {
+                preference.setGreeting(response)
+            }
+        }
+
+        textList.clear()
         response
             .replace("!", ".")
             .split(Regex("\n"))

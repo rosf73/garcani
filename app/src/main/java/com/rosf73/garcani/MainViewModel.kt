@@ -6,6 +6,7 @@ import com.google.ai.client.generativeai.type.BlockThreshold
 import com.google.ai.client.generativeai.type.HarmCategory
 import com.google.ai.client.generativeai.type.SafetySetting
 import com.google.ai.client.generativeai.type.ServerException
+import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -46,12 +47,52 @@ class MainViewModel : ViewModel() {
         _deckState.value = DeckUiState.TarotDeck
     }
 
-    suspend fun sendPrompt(prompt: String): Pair<String, Boolean> {
+    suspend fun sendGreetingPrompt(): Pair<String, Boolean> {
+        val prompt = """
+            You are a fortune teller from now on.
+            And... your name is GArcani.
+            Please add a line break at the end of every sentence.
+        """.trimIndent()
+
         var resultMsg = ""
         var result = false
 
         try {
             val response = generativeModel.generateContent(prompt)
+            if (response.text.isNullOrBlank()) {
+                resultMsg = "There was something wrong with the response.\nPlease wait a moment and try again."
+            } else {
+                resultMsg = response.text!!
+                result = true
+            }
+        } catch (e: com.google.ai.client.generativeai.type.GoogleGenerativeAIException) {
+            resultMsg = "Something is wrong with Gemini.\nPlease wait a moment and try again."
+        }
+
+        if (resultMsg.isBlank()) {
+            resultMsg = "There was something wrong with the response.\nPlease wait a moment and try again."
+        }
+        return resultMsg to result
+    }
+
+    suspend fun sendGreetingChat(answer: String): Pair<String, Boolean> {
+        val prompt = """
+            You are a fortune teller from now on.
+            And... your name is GArcani.
+            Please add a line break at the end of every sentence.
+        """.trimIndent()
+
+        var resultMsg = ""
+        var result = false
+
+        try {
+            val chat = generativeModel.startChat(
+                history = listOf(
+                    content(role = "user") { text(prompt) },
+                    content(role = "model") { text(answer) }
+                )
+            )
+            val response = chat.sendMessage("Hey, I'm back again. Let's say hello briefly.")
             if (response.text.isNullOrBlank()) {
                 resultMsg = "There was something wrong with the response.\nPlease wait a moment and try again."
             } else {
