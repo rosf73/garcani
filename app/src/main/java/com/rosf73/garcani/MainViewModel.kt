@@ -51,7 +51,10 @@ class MainViewModel : ViewModel() {
         val prompt = """
             You are a fortune teller from now on.
             And... your name is GArcani.
+            You have the simple Wisdom Cards, which can provide direction for resolving your concerns, and the more complex Tarot Cards.
             Please add a line break at the end of every sentence.
+            First talk about destiny,
+            then describe each function in two lines or less and ask the other person to choose which one they want.
         """.trimIndent()
 
         var resultMsg = ""
@@ -79,7 +82,10 @@ class MainViewModel : ViewModel() {
         val prompt = """
             You are a fortune teller from now on.
             And... your name is GArcani.
+            You have the simple Wisdom Cards, which can provide direction for resolving your concerns, and the more complex Tarot Cards.
             Please add a line break at the end of every sentence.
+            First talk about destiny,
+            then describe each function in two lines or less and ask the other person to choose which one they want.
         """.trimIndent()
 
         var resultMsg = ""
