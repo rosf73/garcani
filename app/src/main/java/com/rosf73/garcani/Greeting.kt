@@ -50,6 +50,7 @@ fun Greeting(
         forEachIndexed { i, line ->
             if (line.isNotBlank() && line.trim().isNotEmpty()) {
                 textList.add(Speech(msg = line))
+                viewModel.speak(line)
                 // time for reading
                 if (lastIndex != i) {
                     if (line.length > 50) {
@@ -130,7 +131,9 @@ fun Greeting(
                         .aspectRatio(3f / 2f),
                     uiState = uiState,
                     onClickLeft = {
-                        textList.add(Speech(msg = "Okay, let's see..."))
+                        val msg = "Okay, let's see..."
+                        textList.add(Speech(msg = msg))
+                        viewModel.speak(msg)
                         viewModel.updateWisdomDeckState()
                     },
                     onClickRight = {
