@@ -19,7 +19,7 @@ fun SpreadCard(
     GradientButton(
         modifier = modifier
             .border(
-                width = 5.dp,
+                width = 4.dp,
                 color = White,
                 shape = MaterialTheme.shapes.extraSmall,
             ),

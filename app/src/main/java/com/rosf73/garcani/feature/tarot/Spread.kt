@@ -155,7 +155,7 @@ private fun Card(
     GradientButton(
         modifier = modifier
             .border(
-                width = 5.dp,
+                width = 3.dp,
                 color = White,
                 shape = MaterialTheme.shapes.extraSmall,
             ),
