@@ -12,13 +12,20 @@ class SharedPreference(context: Context) {
         }
     }
 
-    fun getGreeting(): String {
-        return pref.getString(PREF_VISITED, "") ?: ""
+    fun setSound(on: Boolean) {
+        with(pref.edit()) {
+            putBoolean(PREF_SOUND, on)
+            apply()
+        }
     }
+
+    fun getGreeting() = pref.getString(PREF_VISITED, "") ?: ""
+    fun getSound() = pref.getBoolean(PREF_SOUND, false)
 
     companion object {
         private const val PREFERENCE_FILE_KEY = "com.rosf73.garcani.PREFERENCE_FILE_KEY"
 
         private const val PREF_VISITED = "PREF_VISITED"
+        private const val PREF_SOUND = "PREF_SOUND"
     }
 }

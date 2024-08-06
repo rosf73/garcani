@@ -9,6 +9,7 @@ import com.google.ai.client.generativeai.type.BlockThreshold
 import com.google.ai.client.generativeai.type.HarmCategory
 import com.google.ai.client.generativeai.type.SafetySetting
 import com.google.ai.client.generativeai.type.content
+import com.rosf73.garcani.localdata.SharedPreference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.Locale
@@ -20,6 +21,7 @@ class MainViewModel : ViewModel() {
 
     val generativeModel: GenerativeModel
 
+    private var preference: SharedPreference? = null
     private var tts: TextToSpeech? = null
 
     init {
@@ -35,6 +37,21 @@ class MainViewModel : ViewModel() {
             )
         )
     }
+
+    fun setPreference(context: Context) {
+        preference = SharedPreference(context)
+    }
+
+    fun setGreeting(greeting: String) {
+        preference?.setGreeting(greeting)
+    }
+
+    fun setSoundOn(soundOn: Boolean) {
+        preference?.setSound(soundOn)
+    }
+
+    fun getGreeting() = preference?.getGreeting() ?: ""
+    fun getSoundOn() = preference?.getSound() ?: false
 
     fun setTTS(context: Context) {
         tts = TextToSpeech(context) { status ->

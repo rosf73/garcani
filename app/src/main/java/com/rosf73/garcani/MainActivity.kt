@@ -21,6 +21,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         viewModel.setTTS(this)
+        viewModel.setPreference(this)
 
         enableEdgeToEdge()
         setContent {
