@@ -137,9 +137,6 @@ fun Greeting(
                         .aspectRatio(3f / 2f),
                     uiState = uiState,
                     onClickLeft = {
-                        val msg = "Okay, let's see..."
-                        textList.add(Speech(msg = msg))
-                        viewModel.speak(msg)
                         viewModel.updateWisdomDeckState()
                     },
                     onClickRight = {
