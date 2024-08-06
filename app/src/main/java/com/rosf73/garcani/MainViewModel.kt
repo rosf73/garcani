@@ -71,7 +71,9 @@ class MainViewModel : ViewModel() {
     }
 
     fun speak(message: String) {
-        tts?.speak(message, TextToSpeech.QUEUE_FLUSH, null, null)
+        if (getSoundOn()) {
+            tts?.speak(message, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
     }
 
     fun clearDeckState() {
