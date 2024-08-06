@@ -1,14 +1,18 @@
 package com.rosf73.garcani
 
+import android.content.Context
+import android.speech.tts.TextToSpeech
+import android.speech.tts.Voice
 import androidx.lifecycle.ViewModel
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.BlockThreshold
 import com.google.ai.client.generativeai.type.HarmCategory
 import com.google.ai.client.generativeai.type.SafetySetting
-import com.google.ai.client.generativeai.type.ServerException
 import com.google.ai.client.generativeai.type.content
+import com.rosf73.garcani.localdata.SharedPreference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.Locale
 
 class MainViewModel : ViewModel() {
 
@@ -16,6 +20,9 @@ class MainViewModel : ViewModel() {
     val deckState = _deckState.asStateFlow()
 
     val generativeModel: GenerativeModel
+
+    private var preference: SharedPreference? = null
+    private var tts: TextToSpeech? = null
 
     init {
         val apiKey = BuildConfig.apiKey
@@ -29,6 +36,44 @@ class MainViewModel : ViewModel() {
                 SafetySetting(HarmCategory.SEXUALLY_EXPLICIT, BlockThreshold.NONE),
             )
         )
+    }
+
+    fun setPreference(context: Context) {
+        preference = SharedPreference(context)
+    }
+
+    fun setGreeting(greeting: String) {
+        preference?.setGreeting(greeting)
+    }
+
+    fun setSoundOn(soundOn: Boolean) {
+        preference?.setSound(soundOn)
+    }
+
+    fun getGreeting() = preference?.getGreeting() ?: ""
+    fun getSoundOn() = preference?.getSound() ?: false
+
+    fun setTTS(context: Context) {
+        tts = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                setTTSSetting()
+            }
+        }
+    }
+
+    private fun setTTSSetting() = tts?.apply {
+        language = Locale.ENGLISH
+        voice = voices?.firstOrNull { voice ->
+            voice.name.contains("en-US", ignoreCase = true)
+                    && voice.quality == Voice.QUALITY_HIGH
+        } ?: defaultVoice
+        setPitch(0.8f)
+    }
+
+    fun speak(message: String) {
+        if (getSoundOn()) {
+            tts?.speak(message, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
     }
 
     fun clearDeckState() {
@@ -113,6 +158,13 @@ class MainViewModel : ViewModel() {
             resultMsg = "There was something wrong with the response.\nPlease wait a moment and try again."
         }
         return resultMsg to result
+    }
+
+    override fun onCleared() {
+        tts?.stop()
+        tts?.shutdown()
+        tts = null
+        super.onCleared()
     }
 }
 

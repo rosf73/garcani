@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -16,16 +18,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.rosf73.garcani.feature.tarot.TarotDeck
 import com.rosf73.garcani.feature.tarot.TarotViewModel
 import com.rosf73.garcani.feature.wisdom.WisdomDeck
-import com.rosf73.garcani.localdata.SharedPreference
 import com.rosf73.garcani.localdata.Speech
 import com.rosf73.garcani.ui.anim.Shadow
 import com.rosf73.garcani.ui.anim.WaveCircle
@@ -39,8 +42,6 @@ fun Greeting(
     tarotViewModel: TarotViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-
     val uiState by viewModel.deckState.collectAsState()
     val model = viewModel.generativeModel
 
@@ -50,6 +51,7 @@ fun Greeting(
         forEachIndexed { i, line ->
             if (line.isNotBlank() && line.trim().isNotEmpty()) {
                 textList.add(Speech(msg = line))
+                viewModel.speak(line)
                 // time for reading
                 if (lastIndex != i) {
                     if (line.length > 50) {
@@ -65,8 +67,7 @@ fun Greeting(
     }
 
     LaunchedEffect(key1 = model) {
-        val preference = SharedPreference(context)
-        val greeting = preference.getGreeting()
+        val greeting = viewModel.getGreeting()
 
         val response: String
         val isSuccess: Boolean
@@ -80,7 +81,7 @@ fun Greeting(
             isSuccess = result.second
 
             if (isSuccess) {
-                preference.setGreeting(response)
+                viewModel.setGreeting(response)
             }
         }
 
@@ -103,6 +104,12 @@ fun Greeting(
                 .padding(it)
                 .fillMaxSize(),
         ) {
+            SoundSetting(
+                modifier = Modifier.align(Alignment.TopEnd),
+                initialValue = viewModel.getSoundOn(),
+                setValue = { on -> viewModel.setSoundOn(on) },
+            )
+
             Column(
                 modifier = Modifier
                     .align(Alignment.TopCenter),
@@ -130,7 +137,9 @@ fun Greeting(
                         .aspectRatio(3f / 2f),
                     uiState = uiState,
                     onClickLeft = {
-                        textList.add(Speech(msg = "Okay, let's see..."))
+                        val msg = "Okay, let's see..."
+                        textList.add(Speech(msg = msg))
+                        viewModel.speak(msg)
                         viewModel.updateWisdomDeckState()
                     },
                     onClickRight = {
@@ -169,6 +178,31 @@ fun Greeting(
                     }
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun SoundSetting(
+    modifier: Modifier = Modifier,
+    initialValue: Boolean,
+    setValue: (Boolean) -> Unit,
+) {
+    var soundOn by remember { mutableStateOf(initialValue) }
+
+    if (soundOn) {
+        IconButton(modifier = modifier, onClick = {
+            setValue(false)
+            soundOn = false
+        }) {
+            Icon(painter = painterResource(id = R.drawable.ic_volume_on), contentDescription = null)
+        }
+    } else {
+        IconButton(modifier = modifier,onClick = {
+            setValue(true)
+            soundOn = true
+        }) {
+            Icon(painter = painterResource(id = R.drawable.ic_volume_off), contentDescription = null)
         }
     }
 }
