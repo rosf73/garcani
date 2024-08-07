@@ -31,6 +31,8 @@ class MainViewModel : ViewModel() {
     private var preference: SharedPreference? = null
     private var tts: TextToSpeech? = null
 
+    private var lastSentence = ""
+
     init {
         val apiKey = BuildConfig.apiKey
         generativeModel = GenerativeModel(
@@ -108,6 +110,8 @@ class MainViewModel : ViewModel() {
         preference?.setSound(soundOn)
         if (!soundOn) {
             tts?.stop()
+        } else {
+            tts?.speak(lastSentence, TextToSpeech.QUEUE_FLUSH, null, null)
         }
     }
 
@@ -132,6 +136,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun speak(message: String) {
+        lastSentence = message
         if (getSoundOn()) {
             tts?.speak(message, TextToSpeech.QUEUE_FLUSH, null, null)
         }
