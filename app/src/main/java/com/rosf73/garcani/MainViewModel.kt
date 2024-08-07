@@ -43,11 +43,9 @@ class MainViewModel : ViewModel() {
                 SafetySetting(HarmCategory.SEXUALLY_EXPLICIT, BlockThreshold.NONE),
             )
         )
-
-        greeting()
     }
 
-    private fun greeting() {
+    fun greeting() {
         viewModelScope.launch {
             val greeting = getGreeting()
 

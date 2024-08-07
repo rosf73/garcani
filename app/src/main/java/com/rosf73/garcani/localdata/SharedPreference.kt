@@ -1,11 +1,13 @@
 package com.rosf73.garcani.localdata
 
 import android.content.Context
+import android.util.Log
 
 class SharedPreference(context: Context) {
     private val pref = context.getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
 
     fun setGreeting(value: String) {
+        Log.d(SharedPreference::class.java.simpleName, "setGreeting = $value")
         with(pref.edit()) {
             putString(PREF_VISITED, value)
             apply()
@@ -19,7 +21,9 @@ class SharedPreference(context: Context) {
         }
     }
 
-    fun getGreeting() = pref.getString(PREF_VISITED, "") ?: ""
+    fun getGreeting() = (pref.getString(PREF_VISITED, "") ?: "").also {
+        Log.d(SharedPreference::class.java.simpleName, "getGreeting = $it")
+    }
     fun getSound() = pref.getBoolean(PREF_SOUND, false)
 
     companion object {
