@@ -3,18 +3,25 @@ package com.rosf73.garcani
 import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.Voice
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.BlockThreshold
 import com.google.ai.client.generativeai.type.HarmCategory
 import com.google.ai.client.generativeai.type.SafetySetting
 import com.google.ai.client.generativeai.type.content
 import com.rosf73.garcani.localdata.SharedPreference
+import com.rosf73.garcani.localdata.Speech
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class MainViewModel : ViewModel() {
+
+    val textList = mutableStateListOf(Speech(msg = "..."))
 
     private val _deckState = MutableStateFlow<DeckUiState>(DeckUiState.Ready)
     val deckState = _deckState.asStateFlow()
@@ -36,6 +43,57 @@ class MainViewModel : ViewModel() {
                 SafetySetting(HarmCategory.SEXUALLY_EXPLICIT, BlockThreshold.NONE),
             )
         )
+    }
+
+    fun greeting() {
+        viewModelScope.launch {
+            val greeting = getGreeting()
+
+            val response: String
+            val isSuccess: Boolean
+            if (greeting.isNotBlank()) { // visited
+                val result = sendGreetingChat(greeting)
+                response = result.first
+                isSuccess = result.second
+            } else {
+                val result = sendGreetingPrompt()
+                response = result.first
+                isSuccess = result.second
+
+                if (isSuccess) {
+                    setGreeting(response)
+                }
+            }
+
+            textList.clear()
+            val lines = response
+                .replace("!", ".")
+                .split(Regex("\n"))
+            speechEachLine(lines)
+
+            if (isSuccess) {
+                updateOdysseyDeckState()
+            }
+        }
+    }
+
+    suspend fun speechEachLine(list: List<String>) {
+        list.forEachIndexed { i, line ->
+            if (line.isNotBlank() && line.trim().isNotEmpty()) {
+                textList.add(Speech(msg = line))
+                speak(line)
+                // time for reading
+                if (list.lastIndex != i) {
+                    if (line.length > 50) {
+                        delay(5000)
+                    } else if (line.length > 30) {
+                        delay(4000)
+                    } else {
+                        delay(3000)
+                    }
+                }
+            }
+        }
     }
 
     fun setPreference(context: Context) {

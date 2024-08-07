@@ -81,11 +81,15 @@ fun TarotDeck(
             is TarotUiState.Interpretation -> { // 4. interpret of each card and comprehensive evaluation
                 val interpretation = (uiState as TarotUiState.Interpretation).result
                 Interpretation(
-                    modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier
+                        .align(Alignment.Center)
                         .fillMaxWidth(0.9f)
                         .fillMaxHeight(0.75f),
                     result = interpretation,
-                    onClickClose = onClose,
+                    onClickClose = {
+                        onClose()
+                        viewModel.clearTarotState(false)
+                    },
                 )
             }
         }

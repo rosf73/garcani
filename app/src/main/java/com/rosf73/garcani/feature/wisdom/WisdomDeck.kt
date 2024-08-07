@@ -55,7 +55,7 @@ fun WisdomDeck(
     LaunchedEffect(key1 = model) {
         awaitAll(
             async {
-                delay(1600)
+                delay(1100)
                 if (!isDoneRequest) {
                     speech("I'm selecting 10 out of 30 sentences... Just a moment.") // TODO: temp
                 }
