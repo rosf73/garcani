@@ -106,6 +106,9 @@ class MainViewModel : ViewModel() {
 
     fun setSoundOn(soundOn: Boolean) {
         preference?.setSound(soundOn)
+        if (!soundOn) {
+            tts?.stop()
+        }
     }
 
     fun getGreeting() = preference?.getGreeting() ?: ""
