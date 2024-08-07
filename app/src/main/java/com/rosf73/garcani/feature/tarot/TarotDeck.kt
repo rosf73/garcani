@@ -21,6 +21,7 @@ fun TarotDeck(
     model: GenerativeModel,
     viewModel: TarotViewModel,
     speech: suspend (String) -> Unit,
+    speak: (String) -> Unit,
     onClose: () -> Unit,
 ) {
     val uiState by viewModel.tarotState.collectAsState()
@@ -80,6 +81,7 @@ fun TarotDeck(
             }
             is TarotUiState.Interpretation -> { // 4. interpret of each card and comprehensive evaluation
                 val interpretation = (uiState as TarotUiState.Interpretation).result
+                speak(interpretation)
                 Interpretation(
                     modifier = Modifier
                         .align(Alignment.Center)

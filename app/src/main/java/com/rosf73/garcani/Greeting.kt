@@ -115,6 +115,7 @@ fun Greeting(
                     speech = { text ->
                         viewModel.speechEachLine(text.split("\n"))
                     },
+                    speak = { text -> viewModel.speak(text) },
                     onClose = {
                         viewModel.updateOdysseyDeckState()
                     }
