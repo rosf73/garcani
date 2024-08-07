@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.ButtonDefaults
@@ -26,7 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.ai.client.generativeai.GenerativeModel
 import com.rosf73.garcani.ui.anim.animateFloatAsState
 import com.rosf73.garcani.ui.core.GradientButton
@@ -63,8 +66,8 @@ fun WisdomDeck(
             async {
                 try {
                     val prompt = """
-                        Please select 30 short quotes of less than 60 characters
-                        and write 30 lines in the format of [number]:[content] without any additional words.
+                        Please select 10 short quotes of less than 60 characters
+                        and write 10 lines in the format of [number]:[content] without any additional words.
                     """.trimIndent()
                     val response = model.generateContent(prompt)
 
@@ -234,7 +237,10 @@ private fun WisdomCard(
         onClick = onClick,
     ) {
         if (isDoneToSelect.value) {
-            Text(text = content, color = PurpleGrey40)
+            val size = if (content.length > 80) 12.sp
+                    else if (content.length > 60) 13.sp
+                    else TextUnit.Unspecified
+            Text(text = content, color = PurpleGrey40, fontSize = size)
         }
     }
 }
