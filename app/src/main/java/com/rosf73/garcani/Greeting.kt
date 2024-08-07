@@ -14,10 +14,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,12 +27,10 @@ import androidx.compose.ui.unit.dp
 import com.rosf73.garcani.feature.tarot.TarotDeck
 import com.rosf73.garcani.feature.tarot.TarotViewModel
 import com.rosf73.garcani.feature.wisdom.WisdomDeck
-import com.rosf73.garcani.localdata.Speech
 import com.rosf73.garcani.ui.anim.Shadow
 import com.rosf73.garcani.ui.anim.WaveCircle
 import com.rosf73.garcani.ui.core.SpeechBubble
 import com.rosf73.garcani.ui.theme.Purple80CC
-import kotlinx.coroutines.delay
 
 @Composable
 fun Greeting(
@@ -44,57 +40,6 @@ fun Greeting(
 ) {
     val uiState by viewModel.deckState.collectAsState()
     val model = viewModel.generativeModel
-
-    val textList = remember { mutableStateListOf(Speech(msg = "...")) }
-
-    suspend fun List<String>.speechEachLine() {
-        forEachIndexed { i, line ->
-            if (line.isNotBlank() && line.trim().isNotEmpty()) {
-                textList.add(Speech(msg = line))
-                viewModel.speak(line)
-                // time for reading
-                if (lastIndex != i) {
-                    if (line.length > 50) {
-                        delay(5000)
-                    } else if (line.length > 30) {
-                        delay(4000)
-                    } else {
-                        delay(3000)
-                    }
-                }
-            }
-        }
-    }
-
-    LaunchedEffect(key1 = model) {
-        val greeting = viewModel.getGreeting()
-
-        val response: String
-        val isSuccess: Boolean
-        if (greeting.isNotBlank()) { // visited
-            val result = viewModel.sendGreetingChat(greeting)
-            response = result.first
-            isSuccess = result.second
-        } else {
-            val result = viewModel.sendGreetingPrompt()
-            response = result.first
-            isSuccess = result.second
-
-            if (isSuccess) {
-                viewModel.setGreeting(response)
-            }
-        }
-
-        textList.clear()
-        response
-            .replace("!", ".")
-            .split(Regex("\n"))
-            .speechEachLine()
-
-        if (isSuccess) {
-            viewModel.updateOdysseyDeckState()
-        }
-    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -120,7 +65,7 @@ fun Greeting(
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
                         .height(180.dp),
-                    textList = textList,
+                    textList = viewModel.textList,
                 )
             }
 
@@ -152,7 +97,7 @@ fun Greeting(
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter),
                     speech = { text ->
-                        text.split("\n").speechEachLine()
+                        viewModel.speechEachLine(text.split("\n"))
                     },
                     onClose = {
                         viewModel.updateOdysseyDeckState()
@@ -168,7 +113,7 @@ fun Greeting(
                         .align(Alignment.Center),
                     viewModel = tarotViewModel,
                     speech = { text ->
-                        text.split("\n").speechEachLine()
+                        viewModel.speechEachLine(text.split("\n"))
                     },
                     onClose = {
                         viewModel.updateOdysseyDeckState()
