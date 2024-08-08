@@ -4,6 +4,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -95,7 +96,9 @@ fun Spread(
             }
             SpreadType.CELTIC_CROSS -> {
                 CelticCrossSpread(
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(0.dp, 0.dp, 0.dp, 160.dp),
                     selectedCards = selectedCards,
                     onDoneSelecting = { _ ->
                         isDoneSelection = true
