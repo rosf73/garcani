@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">GArcani</string>
+
+    <string name="desc_gemini">Unclickable Gemini Icon</string>
+    <string name="desc_copy">Copy result button</string>
+    <string name="desc_close">Close result and return to main screen button</string>
 </resources>
