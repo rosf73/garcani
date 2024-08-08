@@ -10,8 +10,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.rosf73.garcani.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -31,7 +33,7 @@ fun OneCardSpread(
         if (selectedCard != null) {
             uiState.value = OneCardState.Selecting
             delay(800)
-            uiState.value = OneCardState.Opening(selectedCard.value) // as only 1 card is needed
+            uiState.value = OneCardState.Opening(selectedCard.key, selectedCard.value) // as only 1 card is needed
             onDoneSelecting(selectedCard.key)
         }
     }
@@ -43,9 +45,10 @@ fun OneCardSpread(
     }
 
     if (uiState.value is OneCardState.Opening) {
+        val opening = uiState.value as OneCardState.Opening
         AsyncImage(
             modifier = modifier.size(120.dp, 180.dp),
-            model = (uiState.value as OneCardState.Opening).imageUrl,
+            model = opening.imageUrl,
             contentScale = ContentScale.Fit,
             onSuccess = {
                 isOpened = true
@@ -54,7 +57,7 @@ fun OneCardSpread(
                     onInterpret(selectedCard!!.key)
                 }
             },
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.desc_tarot_card, opening.imageName)
         )
     }
 }
@@ -62,5 +65,5 @@ fun OneCardSpread(
 private sealed interface OneCardState {
     data object Ready : OneCardState
     data object Selecting : OneCardState
-    data class Opening(val imageUrl: String) : OneCardState
+    data class Opening(val imageName: String, val imageUrl: String) : OneCardState
 }

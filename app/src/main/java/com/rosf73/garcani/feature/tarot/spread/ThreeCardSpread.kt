@@ -14,8 +14,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.rosf73.garcani.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -40,7 +42,7 @@ fun ThreeCardSpread(
             uiState.value = ThreeCardState.ThirdSelected
             delay(800)
             onDoneSelecting(cards[2], cards[1], cards[0])
-            uiState.value = ThreeCardState.Opening(urls)
+            uiState.value = ThreeCardState.Opening(cards, urls)
         } else if (selectedCards.size > 1) {
             uiState.value = ThreeCardState.SecondSelected
         } else if (selectedCards.isNotEmpty()) {
@@ -84,39 +86,40 @@ fun ThreeCardSpread(
     }
 
     if (uiState.value is ThreeCardState.Opening) {
+        val opening = uiState.value as ThreeCardState.Opening
         Row(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             AsyncImage(
                 modifier = Modifier.size(120.dp, 180.dp),
-                model = (uiState.value as ThreeCardState.Opening).imageUrls[0],
+                model = opening.imageUrls[0],
                 contentScale = ContentScale.Fit,
                 onSuccess = {
                     openCount++
                     checkOpening()
                 },
-                contentDescription = null,
+                contentDescription = stringResource(id = R.string.desc_tarot_card, opening.imageNames[0])
             )
             AsyncImage(
                 modifier = Modifier.size(120.dp, 180.dp),
-                model = (uiState.value as ThreeCardState.Opening).imageUrls[1],
+                model = opening.imageUrls[1],
                 contentScale = ContentScale.Fit,
                 onSuccess = {
                     openCount++
                     checkOpening()
                 },
-                contentDescription = null,
+                contentDescription = stringResource(id = R.string.desc_tarot_card, opening.imageNames[1])
             )
             AsyncImage(
                 modifier = Modifier.size(120.dp, 180.dp),
-                model = (uiState.value as ThreeCardState.Opening).imageUrls[2],
+                model = opening.imageUrls[2],
                 contentScale = ContentScale.Fit,
                 onSuccess = {
                     openCount++
                     checkOpening()
                 },
-                contentDescription = null,
+                contentDescription = stringResource(id = R.string.desc_tarot_card, opening.imageNames[2])
             )
         }
     }
@@ -127,5 +130,5 @@ private sealed interface ThreeCardState {
     data object FirstSelected : ThreeCardState
     data object SecondSelected : ThreeCardState
     data object ThirdSelected : ThreeCardState
-    data class Opening(val imageUrls: List<String>) : ThreeCardState
+    data class Opening(val imageNames: List<String>, val imageUrls: List<String>) : ThreeCardState
 }

@@ -6,4 +6,5 @@
     <string name="desc_close">Close result and return to main screen button</string>
     <string name="desc_sound_on">Sound toggle icon (It\'s on now)</string>
     <string name="desc_sound_off">Sound toggle icon (It\'s off now)</string>
+    <string name="desc_tarot_card">You chose a %s card</string>
 </resources>
