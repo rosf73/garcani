@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -245,6 +246,7 @@ private fun ImageCard(
     AsyncImage(
         modifier = modifier.size(100.dp, 150.dp),
         model = url,
+        error = painterResource(id = R.drawable.img_error_card),
         contentScale = ContentScale.Fit,
         onSuccess = {
             onSuccess()

@@ -10,6 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -49,6 +50,7 @@ fun OneCardSpread(
         AsyncImage(
             modifier = modifier.size(120.dp, 180.dp),
             model = opening.imageUrl,
+            error = painterResource(id = R.drawable.img_error_card),
             contentScale = ContentScale.Fit,
             onSuccess = {
                 isOpened = true
