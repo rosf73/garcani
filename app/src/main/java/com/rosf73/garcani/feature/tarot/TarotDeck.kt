@@ -76,6 +76,7 @@ fun TarotDeck(
                 Spread(
                     modifier = Modifier.fillMaxSize(),
                     uiState = uiState as TarotUiState.Spread,
+                    speech = speech,
                     sendMessage = { viewModel.sendSpreadChat(model, it) }
                 )
             }

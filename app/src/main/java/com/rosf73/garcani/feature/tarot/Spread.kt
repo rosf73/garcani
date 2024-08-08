@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,11 +28,13 @@ import com.rosf73.garcani.ui.core.GradientButton
 import com.rosf73.garcani.ui.theme.CardDisableGradient
 import com.rosf73.garcani.ui.theme.CardGradient
 import com.rosf73.garcani.ui.theme.White
+import kotlinx.coroutines.launch
 
 @Composable
 fun Spread(
     modifier: Modifier = Modifier,
     uiState: TarotUiState.Spread,
+    speech: suspend (String) -> Unit,
     sendMessage: (String) -> Unit,
 ) {
     val cards = remember {
@@ -51,6 +54,8 @@ fun Spread(
 
     val selectedCards = remember { mutableStateMapOf<String, String>() }
     var isDoneSelection by remember { mutableStateOf(false) }
+
+    val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = modifier) {
         when (uiState.type) {
@@ -115,6 +120,9 @@ fun Spread(
                 onSelect = {
                     if (selectedCards.size < selectableCount) {
                         selectedCards[it] = cards[it]!!
+                        coroutineScope.launch {
+                            speech("\"$it\"")
+                        }
                     }
                 }
             )
