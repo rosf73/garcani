@@ -1,17 +1,19 @@
 package com.rosf73.garcani.feature.tarot.spread
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -24,111 +26,99 @@ import kotlinx.coroutines.launch
 @Composable
 fun ThreeCardSpread(
     modifier: Modifier = Modifier,
-    selectedCards: SnapshotStateMap<String, String>,
+    selectedCards: SnapshotStateList<Pair<String, String>>,
     onDoneSelecting: (String, String, String) -> Unit,
     onInterpret: (String, String, String) -> Unit,
 ) {
-    val uiState = remember { mutableStateOf<ThreeCardState>(ThreeCardState.Ready) }
-    var openCount = 0
-    var isOpened by remember { mutableStateOf(false) }
+    var isOpened1 by remember { mutableStateOf(false) }
+    var isOpened2 by remember { mutableStateOf(false) }
+    var isOpened3 by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = selectedCards.size) {
-        val cards = selectedCards.keys.toList()
-        val urls = selectedCards.values.toList()
-
-        if (selectedCards.size > 2) {
-            uiState.value = ThreeCardState.ThirdSelected
-            delay(800)
-            onDoneSelecting(cards[2], cards[1], cards[0])
-            uiState.value = ThreeCardState.Opening(cards, urls)
-        } else if (selectedCards.size > 1) {
-            uiState.value = ThreeCardState.SecondSelected
-        } else if (selectedCards.isNotEmpty()) {
-            uiState.value = ThreeCardState.FirstSelected
-        }
-    }
-
     fun checkOpening() {
-        if (openCount > 2) {
+        if (isOpened1 && isOpened2 && isOpened3) {
+            onDoneSelecting(selectedCards[0].first, selectedCards[1].first, selectedCards[2].first)
+
             coroutineScope.launch {
-                isOpened = true
                 delay(1200)
 
-                val cards = selectedCards.keys.toList()
-                onInterpret(cards[2], cards[1], cards[0])
+                onInterpret(selectedCards[0].first, selectedCards[1].first, selectedCards[2].first)
+                isOpened1 = false
+                isOpened2 = false
+                isOpened3 = false
             }
         }
     }
 
-    if (!isOpened) {
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-        ) {
-            if (uiState.value !is ThreeCardState.Ready) {
-                SpreadCard(
-                    modifier = Modifier.size(120.dp, 180.dp),
-                )
-                if (uiState.value !is ThreeCardState.FirstSelected) {
-                    SpreadCard(
-                        modifier = Modifier.size(120.dp, 180.dp),
-                    )
-                    if (uiState.value !is ThreeCardState.SecondSelected) {
-                        SpreadCard(
-                            modifier = Modifier.size(120.dp, 180.dp),
-                        )
-                    }
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+    ) {
+        selectedCards.toList().getOrNull(0)?.let { (card, url) ->
+            ImageCard(
+                modifier = Modifier.size(120.dp, 180.dp),
+                card = card,
+                url = url,
+                onSuccess = {
+                    isOpened1 = true
+                    checkOpening()
                 }
-            }
+            )
         }
-    }
-
-    if (uiState.value is ThreeCardState.Opening) {
-        val opening = uiState.value as ThreeCardState.Opening
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-        ) {
-            AsyncImage(
+        selectedCards.toList().getOrNull(1)?.let { (card, url) ->
+            ImageCard(
                 modifier = Modifier.size(120.dp, 180.dp),
-                model = opening.imageUrls[0],
-                contentScale = ContentScale.Fit,
+                card = card,
+                url = url,
                 onSuccess = {
-                    openCount++
+                    isOpened2 = true
                     checkOpening()
-                },
-                contentDescription = stringResource(id = R.string.desc_tarot_card, opening.imageNames[0])
+                }
             )
-            AsyncImage(
+        }
+        selectedCards.toList().getOrNull(2)?.let { (card, url) ->
+            ImageCard(
                 modifier = Modifier.size(120.dp, 180.dp),
-                model = opening.imageUrls[1],
-                contentScale = ContentScale.Fit,
+                card = card,
+                url = url,
                 onSuccess = {
-                    openCount++
+                    isOpened3 = true
                     checkOpening()
-                },
-                contentDescription = stringResource(id = R.string.desc_tarot_card, opening.imageNames[1])
-            )
-            AsyncImage(
-                modifier = Modifier.size(120.dp, 180.dp),
-                model = opening.imageUrls[2],
-                contentScale = ContentScale.Fit,
-                onSuccess = {
-                    openCount++
-                    checkOpening()
-                },
-                contentDescription = stringResource(id = R.string.desc_tarot_card, opening.imageNames[2])
+                }
             )
         }
     }
 }
 
-private sealed interface ThreeCardState {
-    data object Ready : ThreeCardState
-    data object FirstSelected : ThreeCardState
-    data object SecondSelected : ThreeCardState
-    data object ThirdSelected : ThreeCardState
-    data class Opening(val imageNames: List<String>, val imageUrls: List<String>) : ThreeCardState
+@Composable
+private fun ImageCard(
+    modifier: Modifier,
+    card: String,
+    url: String,
+    onSuccess: () -> Unit,
+) {
+    var isOpened by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        AsyncImage(
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center),
+            model = url,
+            contentScale = ContentScale.Fit,
+            onSuccess = {
+                isOpened = true
+                onSuccess()
+            },
+            contentDescription = stringResource(id = R.string.desc_tarot_card, card)
+        )
+        if (!isOpened) {
+            SpreadCard(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.Center),
+            )
+        }
+    }
 }

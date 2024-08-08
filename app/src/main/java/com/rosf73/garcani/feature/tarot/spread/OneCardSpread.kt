@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun OneCardSpread(
     modifier: Modifier = Modifier,
-    selectedCard: Map.Entry<String, String>?,
+    selectedCard: Pair<String, String>?,
     onDoneSelecting: (String) -> Unit,
     onInterpret: (String) -> Unit,
 ) {
@@ -33,8 +33,8 @@ fun OneCardSpread(
         if (selectedCard != null) {
             uiState.value = OneCardState.Selecting
             delay(800)
-            uiState.value = OneCardState.Opening(selectedCard.key, selectedCard.value) // as only 1 card is needed
-            onDoneSelecting(selectedCard.key)
+            uiState.value = OneCardState.Opening(selectedCard.first, selectedCard.second) // as only 1 card is needed
+            onDoneSelecting(selectedCard.first)
         }
     }
 
@@ -54,7 +54,7 @@ fun OneCardSpread(
                 isOpened = true
                 coroutineScope.launch {
                     delay(1200)
-                    onInterpret(selectedCard!!.key)
+                    onInterpret(selectedCard!!.first)
                 }
             },
             contentDescription = stringResource(id = R.string.desc_tarot_card, opening.imageName)

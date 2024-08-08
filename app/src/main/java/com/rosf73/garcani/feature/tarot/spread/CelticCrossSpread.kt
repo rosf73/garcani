@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +30,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CelticCrossSpread(
     modifier: Modifier = Modifier,
-    selectedCards: SnapshotStateMap<String, String>,
+    selectedCards: SnapshotStateList<Pair<String, String>>,
     onDoneSelecting: (List<String>) -> Unit,
     onInterpret: (List<String>) -> Unit,
 ) {
@@ -40,8 +41,8 @@ fun CelticCrossSpread(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = selectedCards.size) {
-        val cards = selectedCards.keys.toList()
-        val urls = selectedCards.values.toList()
+        val cards = selectedCards.map { it.first }
+        val urls = selectedCards.map { it.second }
 
         if (selectedCards.size == 10) {
             delay(800)
@@ -56,7 +57,7 @@ fun CelticCrossSpread(
                 isOpened = true
                 delay(1200)
 
-                val cards = selectedCards.keys.toList()
+                val cards = selectedCards.map { it.first }
                 onInterpret(cards)
             }
         }
@@ -127,6 +128,7 @@ fun CelticCrossSpread(
     }
 
     if (uiState.value is CelticCrossState.Opening) {
+        val opening = uiState.value as CelticCrossState.Opening
         Row(
             modifier = modifier,
         ) {
@@ -137,8 +139,8 @@ fun CelticCrossSpread(
             ) {
                 ImageCard(
                     modifier = Modifier.align(Alignment.Center),
-                    card = (uiState.value as CelticCrossState.Opening).imageNames[0],
-                    url = (uiState.value as CelticCrossState.Opening).imageUrls[0],
+                    card = opening.imageNames[0],
+                    url = opening.imageUrls[0],
                     onSuccess = {
                         openCount++
                         checkOpening()
@@ -148,8 +150,8 @@ fun CelticCrossSpread(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .rotate(90f),
-                    card = (uiState.value as CelticCrossState.Opening).imageNames[1],
-                    url = (uiState.value as CelticCrossState.Opening).imageUrls[1],
+                    card = opening.imageNames[1],
+                    url = opening.imageUrls[1],
                     onSuccess = {
                         openCount++
                         checkOpening()
@@ -157,8 +159,8 @@ fun CelticCrossSpread(
                 )
                 ImageCard(
                     modifier = Modifier.align(Alignment.BottomCenter),
-                    card = (uiState.value as CelticCrossState.Opening).imageNames[2],
-                    url = (uiState.value as CelticCrossState.Opening).imageUrls[2],
+                    card = opening.imageNames[2],
+                    url = opening.imageUrls[2],
                     onSuccess = {
                         openCount++
                         checkOpening()
@@ -166,8 +168,8 @@ fun CelticCrossSpread(
                 )
                 ImageCard(
                     modifier = Modifier.align(Alignment.CenterStart),
-                    card = (uiState.value as CelticCrossState.Opening).imageNames[3],
-                    url = (uiState.value as CelticCrossState.Opening).imageUrls[3],
+                    card = opening.imageNames[3],
+                    url = opening.imageUrls[3],
                     onSuccess = {
                         openCount++
                         checkOpening()
@@ -175,8 +177,8 @@ fun CelticCrossSpread(
                 )
                 ImageCard(
                     modifier = Modifier.align(Alignment.TopCenter),
-                    card = (uiState.value as CelticCrossState.Opening).imageNames[4],
-                    url = (uiState.value as CelticCrossState.Opening).imageUrls[4],
+                    card = opening.imageNames[4],
+                    url = opening.imageUrls[4],
                     onSuccess = {
                         openCount++
                         checkOpening()
@@ -184,8 +186,8 @@ fun CelticCrossSpread(
                 )
                 ImageCard(
                     modifier = Modifier.align(Alignment.CenterEnd),
-                    card = (uiState.value as CelticCrossState.Opening).imageNames[5],
-                    url = (uiState.value as CelticCrossState.Opening).imageUrls[5],
+                    card = opening.imageNames[5],
+                    url = opening.imageUrls[5],
                     onSuccess = {
                         openCount++
                         checkOpening()
@@ -194,8 +196,8 @@ fun CelticCrossSpread(
             }
             Column(modifier = Modifier.fillMaxHeight()) {
                 ImageCard(
-                    card = (uiState.value as CelticCrossState.Opening).imageNames[6],
-                    url = (uiState.value as CelticCrossState.Opening).imageUrls[6],
+                    card = opening.imageNames[6],
+                    url = opening.imageUrls[6],
                     onSuccess = {
                         openCount++
                         checkOpening()
@@ -203,8 +205,8 @@ fun CelticCrossSpread(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 ImageCard(
-                    card = (uiState.value as CelticCrossState.Opening).imageNames[7],
-                    url = (uiState.value as CelticCrossState.Opening).imageUrls[7],
+                    card = opening.imageNames[7],
+                    url = opening.imageUrls[7],
                     onSuccess = {
                         openCount++
                         checkOpening()
@@ -212,8 +214,8 @@ fun CelticCrossSpread(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 ImageCard(
-                    card = (uiState.value as CelticCrossState.Opening).imageNames[8],
-                    url = (uiState.value as CelticCrossState.Opening).imageUrls[8],
+                    card = opening.imageNames[8],
+                    url = opening.imageUrls[8],
                     onSuccess = {
                         openCount++
                         checkOpening()
@@ -221,8 +223,8 @@ fun CelticCrossSpread(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 ImageCard(
-                    card = (uiState.value as CelticCrossState.Opening).imageNames[9],
-                    url = (uiState.value as CelticCrossState.Opening).imageUrls[9],
+                    card = opening.imageNames[9],
+                    url = opening.imageUrls[9],
                     onSuccess = {
                         openCount++
                         checkOpening()

@@ -12,6 +12,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,7 +53,7 @@ fun Spread(
         }
     }
 
-    val selectedCards = remember { mutableStateMapOf<String, String>() }
+    val selectedCards = remember { mutableStateListOf<Pair<String, String>>() }
     var isDoneSelection by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -62,7 +63,7 @@ fun Spread(
             SpreadType.ONE_CARD -> {
                 OneCardSpread(
                     modifier = Modifier.align(Alignment.Center),
-                    selectedCard = selectedCards.entries.firstOrNull(),
+                    selectedCard = selectedCards.firstOrNull(),
                     onDoneSelecting = {
                         isDoneSelection = true
                     },
@@ -119,7 +120,7 @@ fun Spread(
                 cardList = cardNames,
                 onSelect = {
                     if (selectedCards.size < selectableCount) {
-                        selectedCards[it] = cards[it]!!
+                        selectedCards.add(it to cards[it]!!)
                         coroutineScope.launch {
                             speech("\"$it\"")
                         }
