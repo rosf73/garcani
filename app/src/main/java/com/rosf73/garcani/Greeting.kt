@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.rosf73.garcani.feature.tarot.TarotDeck
 import com.rosf73.garcani.feature.tarot.TarotViewModel
@@ -138,14 +139,20 @@ private fun SoundSetting(
             setValue(false)
             soundOn = false
         }) {
-            Icon(painter = painterResource(id = R.drawable.ic_volume_on), contentDescription = null)
+            Icon(
+                painter = painterResource(id = R.drawable.ic_volume_on),
+                contentDescription = stringResource(id = R.string.desc_sound_on)
+            )
         }
     } else {
         IconButton(modifier = modifier,onClick = {
             setValue(true)
             soundOn = true
         }) {
-            Icon(painter = painterResource(id = R.drawable.ic_volume_off), contentDescription = null)
+            Icon(
+                painter = painterResource(id = R.drawable.ic_volume_off),
+                contentDescription = stringResource(id = R.string.desc_sound_off)
+            )
         }
     }
 }
