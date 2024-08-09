@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.rosf73.garcani.feature.tarot.TarotDeck
 import com.rosf73.garcani.feature.tarot.TarotViewModel
 import com.rosf73.garcani.feature.wisdom.WisdomDeck
+import com.rosf73.garcani.feature.wisdom.WisdomViewModel
 import com.rosf73.garcani.ui.anim.Shadow
 import com.rosf73.garcani.ui.anim.WaveCircle
 import com.rosf73.garcani.ui.core.SpeechBubble
@@ -36,6 +37,7 @@ import com.rosf73.garcani.ui.theme.Purple80CC
 @Composable
 fun Greeting(
     viewModel: MainViewModel,
+    wisdomViewModel: WisdomViewModel,
     tarotViewModel: TarotViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -97,6 +99,7 @@ fun Greeting(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter),
+                    viewModel = wisdomViewModel,
                     speech = { text ->
                         viewModel.speechEachLine(text.split("\n"))
                     },

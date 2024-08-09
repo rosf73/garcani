@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.ButtonDefaults
@@ -17,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,8 +35,6 @@ import com.rosf73.garcani.ui.theme.CardFrontGradient
 import com.rosf73.garcani.ui.theme.CardGradient
 import com.rosf73.garcani.ui.theme.PurpleGrey40
 import com.rosf73.garcani.ui.theme.White
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -47,49 +43,18 @@ import kotlinx.coroutines.launch
 fun WisdomDeck(
     modifier: Modifier = Modifier,
     model: GenerativeModel,
+    viewModel: WisdomViewModel,
     speech: suspend (String) -> Unit,
     onClose: () -> Unit,
 ) {
-    val quoteList = remember { mutableStateListOf<String>() }
-    var isDoneRequest = false
+    val quoteList = viewModel.quoteList
 
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = model) {
-        awaitAll(
-            async {
-                delay(1100)
-                if (!isDoneRequest) {
-                    speech("I'm selecting 10 out of 30 sentences... Just a moment.") // TODO: temp
-                }
-            },
-            async {
-                try {
-                    val prompt = """
-                        Please select 10 short quotes of less than 60 characters
-                        and write 10 lines in the format of [number]:[content] without any additional words.
-                    """.trimIndent()
-                    val response = model.generateContent(prompt)
-
-                    isDoneRequest = true
-                    if (response.text.isNullOrBlank()) { // fail
-                        speech("Something is wrong with Gemini.\nPlease wait a moment and try again.")
-                        onClose()
-                    } else { // success
-                        quoteList.addAll(
-                            response.text?.split("\n")?.map {
-                                it.split(":").last().trim()
-                            } ?: emptyList()
-                        )
-                        speech("Alright! Now, take your pick.") // TODO: temp
-                    }
-                } catch (e: com.google.ai.client.generativeai.type.GoogleGenerativeAIException) { // fail
-                    isDoneRequest = true
-                    speech("Something is wrong with Gemini.\nPlease wait a moment and try again.")
-                    onClose()
-                }
-            }
-        )
+    LaunchedEffect(Unit) {
+        if (quoteList.isEmpty()) {
+            viewModel.sendWisdomPrompt(model, speech, onClose)
+        }
     }
 
     // anim
