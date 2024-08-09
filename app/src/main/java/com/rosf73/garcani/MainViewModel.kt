@@ -80,12 +80,13 @@ class MainViewModel : ViewModel() {
     }
 
     suspend fun speechEachLine(list: List<String>) {
-        list.forEachIndexed { i, line ->
-            if (line.isNotBlank() && line.trim().isNotEmpty()) {
+        val filteredList = list.filter { it.trim().isNotEmpty() }
+        filteredList.forEachIndexed { i, line ->
+            if (line.isNotBlank()) {
                 textList.add(Speech(msg = line))
                 speak(line)
                 // time for reading
-                if (list.lastIndex != i) {
+                if (i < filteredList.lastIndex) {
                     if (line.length > 50) {
                         delay(5000)
                     } else if (line.length > 30) {
