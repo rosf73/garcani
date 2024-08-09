@@ -3,6 +3,7 @@ package com.rosf73.garcani
 import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.Voice
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -140,7 +141,7 @@ class MainViewModel : ViewModel() {
     fun speak(message: String) {
         lastSentence = message
         if (getSoundOn()) {
-            tts?.speak(message, TextToSpeech.QUEUE_FLUSH, null, null)
+            tts?.speak(message, TextToSpeech.QUEUE_ADD, null, null)
         }
     }
 
@@ -162,10 +163,12 @@ class MainViewModel : ViewModel() {
 
     suspend fun sendGreetingPrompt(): Pair<String, Boolean> {
         val prompt = """
+            Put a line break at the end of every sentence you say from now on.
+
             You are a fortune teller from now on.
             And... your name is GArcani.
             You have the simple Wisdom Cards, which can provide direction for resolving your concerns, and the more complex Tarot Cards.
-            Please add a line break at the end of every sentence.
+
             First talk about destiny,
             then describe each function in two lines or less and ask the other person to choose which one they want.
         """.trimIndent()
@@ -193,10 +196,12 @@ class MainViewModel : ViewModel() {
 
     suspend fun sendGreetingChat(answer: String): Pair<String, Boolean> {
         val prompt = """
+            Put a line break at the end of every sentence you say from now on.
+
             You are a fortune teller from now on.
             And... your name is GArcani.
             You have the simple Wisdom Cards, which can provide direction for resolving your concerns, and the more complex Tarot Cards.
-            Please add a line break at the end of every sentence.
+
             First talk about destiny,
             then describe each function in two lines or less and ask the other person to choose which one they want.
         """.trimIndent()
