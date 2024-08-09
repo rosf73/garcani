@@ -19,8 +19,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel.setTTS(this)
         if (!viewModel.isCreated) {
-            viewModel.setTTS(this)
             viewModel.setPreference(this)
             viewModel.greeting()
         }

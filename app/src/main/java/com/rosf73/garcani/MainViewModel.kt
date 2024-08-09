@@ -122,6 +122,7 @@ class MainViewModel : ViewModel() {
     fun getSoundOn() = preference?.getSound() ?: false
 
     fun setTTS(context: Context) {
+        tts?.shutdown()
         tts = TextToSpeech(context) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 setTTSSetting()
