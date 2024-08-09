@@ -30,6 +30,7 @@ class MainViewModel : ViewModel() {
 
     private var preference: SharedPreference? = null
     private var tts: TextToSpeech? = null
+    val isCreated get() = preference != null && tts != null
 
     private var lastSentence = ""
 

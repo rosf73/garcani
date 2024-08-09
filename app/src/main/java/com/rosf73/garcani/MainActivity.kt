@@ -17,9 +17,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.setTTS(this)
-        viewModel.setPreference(this)
-        viewModel.greeting()
+        if (!viewModel.isCreated) {
+            viewModel.setTTS(this)
+            viewModel.setPreference(this)
+            viewModel.greeting()
+        }
 
         enableEdgeToEdge()
         setContent {
