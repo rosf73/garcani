@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -205,7 +206,7 @@ private fun WisdomCard(
             val size = if (content.length > 80) 12.sp
                     else if (content.length > 60) 13.sp
                     else TextUnit.Unspecified
-            Text(text = content, color = PurpleGrey40, fontSize = size)
+            Text(text = content, color = PurpleGrey40, fontSize = size, overflow = TextOverflow.Visible)
         }
     }
 }
