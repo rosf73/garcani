@@ -28,17 +28,17 @@ fun TarotDeck(
 
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = model) {
-        // 1. question to user
-        speech("Please tell me your concerns.\nThe more detailed the content, the deeper the interpretation.")
-        delay(500)
-        viewModel.updateQuestionTarotState()
-    }
-
     LaunchedEffect(key1 = uiState) {
-        if (uiState is TarotUiState.Ready && (uiState as TarotUiState.Ready).isFailure) {
-            speech("Something is wrong with Gemini.\nPlease wait a moment and try again.")
-            onClose()
+        if (uiState is TarotUiState.Ready) {
+            if ((uiState as TarotUiState.Ready).isFailure) {
+                speech("Something is wrong with Gemini.\nPlease wait a moment and try again.")
+                onClose()
+            } else {
+                // 1. question to user
+                speech("Please tell me your concerns.\nThe more detailed the content, the deeper the interpretation.")
+                delay(500)
+                viewModel.updateQuestionTarotState()
+            }
         }
     }
 
