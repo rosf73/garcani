@@ -51,10 +51,14 @@ fun WisdomDeck(
     val quoteList = viewModel.quoteList
 
     val coroutineScope = rememberCoroutineScope()
+    val onDone = {
+        onClose()
+        viewModel.clearQuoteList()
+    }
 
     LaunchedEffect(Unit) {
         if (quoteList.isEmpty()) {
-            viewModel.sendWisdomPrompt(model, speech, onClose)
+            viewModel.sendWisdomPrompt(model, speech, onDone)
         }
     }
 
@@ -73,7 +77,7 @@ fun WisdomDeck(
                     speech("\"$it\"")
                 }
             },
-            onClose = onClose,
+            onClose = onDone,
         )
     }
 }

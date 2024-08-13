@@ -56,4 +56,8 @@ class WisdomViewModel : ViewModel() {
             )
         }
     }
+
+    fun clearQuoteList() {
+        quoteList.clear()
+    }
 }
