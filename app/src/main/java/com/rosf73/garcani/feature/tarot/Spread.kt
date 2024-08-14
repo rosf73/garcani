@@ -140,6 +140,8 @@ private fun CardPack(
     cardList: List<String>,
     onSelect: (String) -> Unit,
 ) {
+    val selectedList = remember { mutableStateListOf<String>() }
+
     LazyRow(
         modifier = modifier,
     ) {
@@ -148,7 +150,9 @@ private fun CardPack(
             Card(
                 modifier = Modifier
                     .size(100.dp, 150.dp),
+                enabled = !selectedList.contains(data),
                 onClick = {
+                    selectedList.add(data)
                     onSelect(data)
                 },
             )
@@ -160,10 +164,9 @@ private fun CardPack(
 @Composable
 private fun Card(
     modifier: Modifier = Modifier,
+    enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    var enabled by remember { mutableStateOf(true) }
-
     GradientButton(
         modifier = modifier
             .border(
@@ -177,10 +180,7 @@ private fun Card(
         ),
         enabled = enabled,
         shape = MaterialTheme.shapes.extraSmall,
-        onClick = {
-            onClick()
-            enabled = false
-        },
+        onClick = onClick,
     ) {
     }
 }
